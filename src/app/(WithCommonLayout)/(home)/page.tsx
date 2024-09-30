@@ -1,5 +1,11 @@
+import Carousel from "@/components/modules/home/Carousel";
+
 const page = () => {
-  return <div></div>;
+  return (
+    <div>
+      <Carousel />
+    </div>
+  );
 };
 
 export default page;

@@ -6,9 +6,9 @@ const nextConfig = {
         protocol: "https",
         hostname: "i.ibb.co.com",
       },
-      // {
-      //   hostname: "placehold.co",
-      // },
+      {
+        hostname: "img.daisyui.com",
+      },
     ],
   },
 };

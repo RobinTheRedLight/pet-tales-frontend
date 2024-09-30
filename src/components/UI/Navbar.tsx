@@ -5,7 +5,14 @@ import logo from "../../app/logo.png";
 import Image from "next/image";
 
 const NavBar = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "retro");
+  const [theme, setTheme] = useState("retro");
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
