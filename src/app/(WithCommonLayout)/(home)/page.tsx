@@ -1,9 +1,9 @@
-import Carousel from "@/components/modules/home/Carousel";
+import Hero from "@/components/modules/home/Hero";
 
 const page = () => {
   return (
     <div>
-      <Carousel />
+      <Hero />
     </div>
   );
 };

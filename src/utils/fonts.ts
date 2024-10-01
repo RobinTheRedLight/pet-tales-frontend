@@ -3,7 +3,7 @@ import { Nunito, Short_Stack } from "next/font/google";
 const nunito_init = Nunito({
   subsets: ["latin"],
   variable: "--font-nunito",
-  weight: ["400", "500", "600"],
+  weight: ["600"],
 });
 
 const shortStack_init = Short_Stack({

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { nunito, shortStack } from "@/utils/fonts";
+import Providers from "@/lib/Providers";
 
 export const metadata: Metadata = {
   title: "Pet Tales",
@@ -13,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="retro">
-      <body className={`${nunito} ${shortStack} font-sans`}>{children}</body>
-    </html>
+    <Providers>
+      <html lang="en" data-theme="retro">
+        <body className={`${nunito} ${shortStack} font-sans`}>{children}</body>
+      </html>
+    </Providers>
   );
 }
