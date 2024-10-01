@@ -1,38 +1,23 @@
-import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "../../api/baseApi";
-import authReducer from "./authSlice";
 
-import {
-  persistReducer,
-  persistStore,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
+const authApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (userInfo) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: userInfo,
+      }),
+    }),
 
-const persistConfig = {
-  key: "auth",
-  storage,
-};
-
-const persistAuthReducer = persistReducer(persistConfig, authReducer);
-
-export const store = configureStore({
-  reducer: {
-    [baseApi.reducerPath]: baseApi.reducer,
-    auth: persistAuthReducer,
-  },
-  middleware: (getDefaultMiddlewares) =>
-    getDefaultMiddlewares({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }).concat(baseApi.middleware),
+    signUp: builder.mutation({
+      query: (userInfos) => ({
+        url: "/auth/signup",
+        method: "POST",
+        body: userInfos,
+      }),
+    }),
+  }),
 });
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-export const persistor = persistStore(store);
+
+export const { useLoginMutation, useSignUpMutation } = authApi;
