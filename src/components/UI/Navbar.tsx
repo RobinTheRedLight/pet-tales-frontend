@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { logout, selectCurrentUser } from "@/redux/features/auth/authSlice";
 
 const NavBar = () => {
-  const [theme, setTheme] = useState("retro");
+  const [theme, setTheme] = useState("wireframe");
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -27,9 +27,9 @@ const NavBar = () => {
 
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setTheme("luxury");
+      setTheme("dracula");
     } else {
-      setTheme("retro");
+      setTheme("wireframe");
     }
   };
   const dispatch = useAppDispatch();
@@ -89,7 +89,7 @@ const NavBar = () => {
         <input
           type="checkbox"
           onChange={handleToggle}
-          checked={theme === "retro" ? false : true}
+          checked={theme === "wireframe" ? false : true}
         />
 
         <svg
