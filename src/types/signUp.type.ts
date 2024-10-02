@@ -3,6 +3,7 @@ export type SignupFormInputs = {
   email: string;
   password: string;
   phone: string;
+  image: string;
   address: string;
   role?: "user" | "admin";
 };

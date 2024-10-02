@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import logo from "../../app/logo.png";
 import Image from "next/image";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { logout, selectCurrentUser } from "@/redux/features/auth/authSlice";
 
 const NavBar = () => {
   const [theme, setTheme] = useState("retro");
@@ -30,11 +32,12 @@ const NavBar = () => {
       setTheme("retro");
     }
   };
-
-  const user = false;
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectCurrentUser);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogOut = () => {
+    dispatch(logout());
     localStorage.clear();
     window.location.reload();
     setIsMenuOpen(false);

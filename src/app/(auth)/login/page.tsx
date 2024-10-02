@@ -2,10 +2,10 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
-import { LoginFormInputs } from "../../types";
-import { useLoginMutation } from "../../redux/features/auth/authApi";
-import { useAppDispatch } from "../../redux/hook";
-import { setUser } from "../../redux/features/auth/authSlice";
+import { LoginFormInputs } from "../../../types";
+import { useLoginMutation } from "../../../redux/features/auth/authApi";
+import { useAppDispatch } from "../../../redux/hook";
+import { setUser } from "../../../redux/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -111,12 +111,21 @@ const Login = () => {
             )}
           </div>
 
-          <button className="btn btn-primary w-full text-lg">Login</button>
+          <button className="btn btn-primary w-full text-lg">Sign in</button>
 
           <p className="text-sm text-center mt-6">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-blue-600 hover:underline">
               Sign Up
+            </Link>
+          </p>
+          <p className="text-sm text-center mt-4">
+            Forgot your password?{" "}
+            <Link
+              href="/forgot-password"
+              className="text-blue-500 hover:underline"
+            >
+              Reset Password
             </Link>
           </p>
         </form>

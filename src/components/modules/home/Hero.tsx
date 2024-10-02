@@ -27,9 +27,10 @@ const Hero = () => {
         <Image
           src={heroImage}
           alt="Man and his dog"
-          className="rounded-md shadow-lg"
-          layout="responsive"
-          objectFit="cover"
+          className="rounded-md shadow-lg w-full h-auto"
+          width={500}
+          height={300}
+          priority
         />
       </div>
     </section>
