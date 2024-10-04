@@ -7,7 +7,7 @@ const adminApi = baseApi.injectEndpoints({
         url: "/admin/allUsers",
         method: "GET",
       }),
-      providesTags: ["allUsers"],
+      providesTags: ["AllUsers"],
     }),
 
     updateUserAdmin: builder.mutation({
@@ -18,7 +18,7 @@ const adminApi = baseApi.injectEndpoints({
           body: adminData.data,
         };
       },
-      invalidatesTags: ["allUsers"],
+      invalidatesTags: ["AllUsers"],
     }),
 
     deleteUser: builder.mutation({
@@ -26,7 +26,7 @@ const adminApi = baseApi.injectEndpoints({
         url: `/admin/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["allUsers"],
+      invalidatesTags: ["AllUsers"],
     }),
   }),
 });
