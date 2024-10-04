@@ -3,22 +3,12 @@ import { baseApi } from "@/redux/api/baseApi";
 const postApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getPosts: builder.query({
-      query: (params) => ({
+      query: () => ({
         url: "/posts/",
         method: "GET",
-        params, // For filtering, pagination, etc.
       }),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      providesTags: (result = [], error, arg) =>
-        result
-          ? [
-              ...result.map(({ id }: { id: string }) => ({
-                type: "Post" as const,
-                id,
-              })),
-              { type: "Post", id: "LIST" },
-            ]
-          : [{ type: "Post", id: "LIST" }],
+
+      providesTags: ["Post"],
     }),
 
     getPostById: builder.query({
