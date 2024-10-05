@@ -24,7 +24,7 @@ const ImageGallery = ({
   };
 
   return (
-    <div className="relative w-full max-w-xl mx-auto">
+    <div className="relative w-full max-w-4xl mx-auto">
       {/* Fixed-size container for the image */}
       <div className="w-full h-[400px] flex justify-center items-center">
         <Image

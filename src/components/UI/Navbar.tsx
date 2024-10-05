@@ -8,7 +8,7 @@ import logo from "../../app/logo.png";
 
 const NavBar = () => {
   const [isHydrated, setIsHydrated] = useState(false);
-  const [theme, setTheme] = useState("wireframe");
+  const [theme, setTheme] = useState("pastel");
 
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
@@ -43,7 +43,7 @@ const NavBar = () => {
     if (e.target.checked) {
       setTheme("dracula");
     } else {
-      setTheme("wireframe");
+      setTheme("pastel");
     }
   };
 
@@ -90,7 +90,7 @@ const NavBar = () => {
         <input
           type="checkbox"
           onChange={handleToggle}
-          checked={theme === "wireframe" ? false : true}
+          checked={theme === "pastel" ? false : true}
         />
 
         <svg
@@ -113,7 +113,7 @@ const NavBar = () => {
   );
 
   return (
-    <nav className="font-short-stack shadow-lg">
+    <nav className="font-short-stack border-b ">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
           <Image

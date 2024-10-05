@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <Providers>
-      <html lang="en" data-theme="wireframe">
+      <html lang="en" data-theme="pastel">
         <body className={`${nunito} ${shortStack} font-sans`}>{children}</body>
       </html>
     </Providers>

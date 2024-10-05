@@ -3,16 +3,15 @@ import heroImage from "../../../assets/Hero.jpg";
 
 const Hero = () => {
   return (
-    <section className="py-10 px-4 md:px-16 flex flex-col md:flex-row items-center justify-between">
+    <section className="py-10 px-4 md:px-16 flex flex-col md:flex-row items-center justify-between bg-gray-100">
       {/* Text Content */}
       <div className="md:w-1/2 text-left mb-6 md:mb-0">
-        <h1 className=" font-short-stack text-3xl md:text-4xl mb-4">
+        <h1 className="font-nunito text-3xl md:text-4xl mb-4">
           Unleash Your Pet&apos;s Tale: Connect Through Shared Experiences
         </h1>
         <p className="text-lg mb-6 text-balance font-short-stack">
           Every pet owner has a unique tale. From heartwarming moments to
-          challenging times, your story matters. Join our community and inspire
-          others with your experiences.
+          challenging times, your story matters.
         </p>
         <a
           href="#share-story"
