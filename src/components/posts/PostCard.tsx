@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
 import { FaCommentAlt } from "react-icons/fa";
@@ -12,6 +12,11 @@ import {
   useCreateOrUpdateVoteMutation,
   useGetVotesByPostIdQuery,
 } from "@/redux/features/vote/voteApi";
+import {
+  useFollowUserMutation,
+  useUnfollowUserMutation,
+  useGetUserFollowingQuery,
+} from "@/redux/features/follow/followApi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
@@ -30,20 +35,42 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   // Local component state
   const [newComment, setNewComment] = useState<string>("");
   const [isCommentsVisible, setIsCommentsVisible] = useState<boolean>(false);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   // API hooks
   const [createComment, { isLoading: isCreating }] = useCreateCommentMutation();
   const [createOrUpdateVote] = useCreateOrUpdateVoteMutation();
+  const [followUser] = useFollowUserMutation();
+  const [unfollowUser] = useUnfollowUserMutation();
 
   // Fetch votes for the post and user-specific votes
   const {
     data: votesData,
-    refetch,
+    refetch: refetchVotes,
     isLoading,
   } = useGetVotesByPostIdQuery({
     postId: post._id,
     userEmail: currentUserEmail,
   });
+
+  // Fetch following status for the current user
+  const { data: followingData } = useGetUserFollowingQuery(
+    currentUserEmail || "",
+    {
+      skip: !currentUserEmail,
+    }
+  );
+
+  useEffect(() => {
+    if (followingData?.data) {
+      setIsFollowing(
+        followingData.data.some(
+          (follow: { followingUserEmail: string }) =>
+            follow.followingUserEmail === post.author
+        )
+      );
+    }
+  }, [followingData, post.author]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -101,9 +128,27 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         voteType,
         userEmail: currentUserEmail,
       }).unwrap();
-      refetch(); // Refresh votes after a successful vote
+      refetchVotes(); // Refresh votes after a successful vote
     } catch (error) {
       console.error("Failed to vote:", error);
+    }
+  };
+
+  // Handle follow/unfollow
+  const handleFollow = async () => {
+    if (!currentUserEmail) {
+      console.error("User not logged in. Cannot follow.");
+      return;
+    }
+    try {
+      if (isFollowing) {
+        await unfollowUser({ userIdToUnfollow: post.author }).unwrap();
+      } else {
+        await followUser({ userIdToFollow: post.author }).unwrap();
+      }
+      setIsFollowing((prev) => !prev);
+    } catch (error) {
+      console.error("Failed to follow/unfollow user:", error);
     }
   };
 
@@ -144,7 +189,19 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
               {post.title}
             </h2>
           </Link>
-          <span className="text-xs text-gray-400">Posted by {post.author}</span>
+          <div className="flex items-center space-x-4">
+            <span className="text-xs text-gray-400">
+              Posted by {post.author}
+            </span>
+            <button
+              className={`px-4 py-1 text-sm rounded-md transition duration-200 ${
+                isFollowing ? "bg-red-500 text-white" : "bg-blue-500 text-white"
+              } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
+              onClick={handleFollow}
+            >
+              {isFollowing ? "Unfollow" : "Follow"}
+            </button>
+          </div>
         </div>
 
         {/* Content Summary and Read More */}
