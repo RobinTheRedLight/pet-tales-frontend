@@ -1,111 +1,102 @@
+"use client";
+
 import React from "react";
-import Link from "next/link";
-import { FaTags, FaUserFriends } from "react-icons/fa";
+import { Toaster, toast } from "sonner";
+import sidebarImage from "../../assets/sidebar.jpg";
 
-const Sidebar = () => {
+function Sidebar() {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    toast.success("Thank you for sharing your thoughts!");
+    (e.target as HTMLFormElement).reset();
+  };
+
   return (
-    <div className="flex flex-col space-y-4 mt-10">
-      {/* Trending Posts */}
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Trending Posts</h2>
-        <ul className="space-y-2">
-          <li>
-            <Link
-              href="/posts/trending1"
-              className="text-blue-600 hover:underline"
-            >
-              How to Care for Your Pet
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/posts/trending2"
-              className="text-blue-600 hover:underline"
-            >
-              Top 10 Pet Foods
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/posts/trending3"
-              className="text-blue-600 hover:underline"
-            >
-              Training Your Dog 101
-            </Link>
-          </li>
-        </ul>
-      </div>
+    <div className="relative min-h-0.5 flex items-center justify-center mt-10 rounded-lg">
+      <Toaster richColors />
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${sidebarImage.src})`,
+          filter: "brightness(0.9)",
+        }}
+      ></div>
 
-      {/* Categories */}
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Categories</h2>
-        <ul className="space-y-2">
-          <li className="flex items-center">
-            <FaTags className="mr-2 text-gray-500" />
-            <Link href="/category/care" className="hover:underline">
-              Pet Care
-            </Link>
-          </li>
-          <li className="flex items-center">
-            <FaTags className="mr-2 text-gray-500" />
-            <Link href="/category/food" className="hover:underline">
-              Pet Food
-            </Link>
-          </li>
-          <li className="flex items-center">
-            <FaTags className="mr-2 text-gray-500" />
-            <Link href="/category/training" className="hover:underline">
-              Training Tips
-            </Link>
-          </li>
-        </ul>
-      </div>
+      {/* Overlay for background image */}
+      <div className="absolute inset-0 "></div>
 
-      {/* Popular Users */}
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Popular Users</h2>
-        <ul className="space-y-2">
-          <li className="flex items-center">
-            <FaUserFriends className="mr-2 text-gray-500" />
-            <Link href="/users/user1" className="hover:underline">
-              User123
-            </Link>
-          </li>
-          <li className="flex items-center">
-            <FaUserFriends className="mr-2 text-gray-500" />
-            <Link href="/users/user2" className="hover:underline">
-              PetLover45
-            </Link>
-          </li>
-          <li className="flex items-center">
-            <FaUserFriends className="mr-2 text-gray-500" />
-            <Link href="/users/user3" className="hover:underline">
-              DogTrainer101
-            </Link>
-          </li>
-        </ul>
-      </div>
+      {/* Content */}
+      <div className="relative z-10 p-6 max-w-lg w-full">
+        <h2 className="text-3xl font-bold text-white text-center mb-6">
+          Send Your Thoughts
+        </h2>
 
-      {/* Popular Tags */}
-      <div>
-        <h2 className="text-lg font-semibold mb-2">Popular Tags</h2>
-        <div className="flex flex-wrap gap-2">
-          <span className="bg-gray-200 px-2 py-1 rounded-md text-sm">
-            #PetCare
-          </span>
-          <span className="bg-gray-200 px-2 py-1 rounded-md text-sm">
-            #DogTraining
-          </span>
-          <span className="bg-gray-200 px-2 py-1 rounded-md text-sm">
-            #HealthyFood
-          </span>
-          <span className="bg-gray-200 px-2 py-1 rounded-md text-sm">
-            #PetLovers
-          </span>
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name Field */}
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-white"
+            >
+              Your Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              className="mt-1 p-2 block w-full bg-white bg-opacity-80 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+            />
+          </div>
+
+          {/* Email Field */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-white"
+            >
+              Your Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              required
+              className="mt-1 p-2 block w-full bg-white bg-opacity-80 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+            />
+          </div>
+
+          {/* Message Field */}
+          <div>
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium text-white"
+            >
+              Your Thoughts
+            </label>
+            <textarea
+              name="message"
+              id="message"
+              rows={5}
+              required
+              className="mt-1 p-2 block w-full bg-white bg-opacity-80 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+            ></textarea>
+          </div>
+
+          {/* Submit Button */}
+          <div className="text-center">
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-blue-700 text-white font-semibold rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              Share Thoughts
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
-};
+}
 
 export default Sidebar;
