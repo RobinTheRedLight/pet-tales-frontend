@@ -4,7 +4,7 @@ import { FaTags, FaUserFriends } from "react-icons/fa";
 
 const Sidebar = () => {
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 mt-10">
       {/* Trending Posts */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2">Trending Posts</h2>

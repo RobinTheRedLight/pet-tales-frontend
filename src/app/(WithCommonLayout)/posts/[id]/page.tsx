@@ -9,6 +9,8 @@ import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import CommentSection from "@/components/CommentSection/CommentSection";
 import { useCreateCommentMutation } from "@/redux/features/comment/commentApi";
 import { useParams } from "next/navigation";
+import PaymentForm from "@/components/Payment/PaymentForm";
+import { Toaster } from "sonner";
 
 const PostPage = () => {
   const [newComments, setNewComments] = useState<{ [key: string]: string }>({});
@@ -30,6 +32,7 @@ const PostPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 ">
+      <Toaster />
       <div className="flex p-4 shadow-md rounded-md mb-4 bg-gray-100">
         {/* Voting Section */}
         <div className="flex flex-col items-center mr-4 text-gray-500">
@@ -129,6 +132,7 @@ const PostPage = () => {
           )}
         </div>
       </div>
+      <PaymentForm />
     </div>
   );
 };
