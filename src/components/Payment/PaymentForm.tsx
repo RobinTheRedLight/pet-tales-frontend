@@ -62,8 +62,15 @@ const CheckoutForm: React.FC = () => {
       } else {
         if (result.paymentIntent?.status === "succeeded") {
           toast.success("Payment successful!");
-          // Redirect to home page or perform other actions
-          window.location.href = "/";
+
+          // Redirect to the original post page
+          const originalPostId = localStorage.getItem("lastAttemptedPostId");
+          if (originalPostId) {
+            window.location.href = `/posts/${originalPostId}`;
+            localStorage.removeItem("lastAttemptedPostId"); // Clean up
+          } else {
+            window.location.href = "/";
+          }
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
