@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.0.0",
     "@reduxjs/toolkit": "^2.2.7",
     "@stripe/react-stripe-js": "^2.8.1",
     "@stripe/stripe-js": "^4.7.0",
@@ -19,8 +20,10 @@
     "date-fns": "^4.1.0",
     "html-react-parser": "^5.1.16",
     "html-truncate": "^1.2.2",
+    "html2canvas": "^1.4.1",
     "isomorphic-dompurify": "^2.16.0",
     "js-cookie": "^3.0.5",
+    "jspdf": "^2.5.2",
     "lodash": "^4.17.21",
     "next": "14.2.13",
     "quill": "^2.0.2",
