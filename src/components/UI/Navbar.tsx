@@ -61,7 +61,7 @@ const NavBar = () => {
   );
 
   return (
-    <nav className="font-short-stack">
+    <nav className="font-short-stack bg-white">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
           <Image

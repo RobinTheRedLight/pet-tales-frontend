@@ -1,9 +1,8 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
-import { FaCommentAlt } from "react-icons/fa";
+import { FaCommentAlt, FaTrashAlt, FaEdit } from "react-icons/fa";
 import { Post } from "@/types";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import CommentSection from "@/components/CommentSection/CommentSection";
@@ -20,30 +19,41 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+import {
+  useDeletePostMutation,
+  useUpdatePostMutation,
+} from "@/redux/features/post/postApi";
+import Swal from "sweetalert2";
+import { toast, Toaster } from "sonner";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 interface PostCardProps {
   post: Post;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  // Get current user info from Redux
   const currentUser = useSelector((state: RootState) =>
     selectCurrentUser(state)
   ) as { email: string } | null;
   const currentUserEmail = currentUser?.email;
 
-  // Local component state
   const [newComment, setNewComment] = useState<string>("");
   const [isCommentsVisible, setIsCommentsVisible] = useState<boolean>(false);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [editContent, setEditContent] = useState<string>(post.content);
+  const [editTitle, setEditTitle] = useState<string>(post.title);
 
-  // API hooks
   const [createComment, { isLoading: isCreating }] = useCreateCommentMutation();
   const [createOrUpdateVote] = useCreateOrUpdateVoteMutation();
   const [followUser] = useFollowUserMutation();
   const [unfollowUser] = useUnfollowUserMutation();
+  const [deletePost] = useDeletePostMutation();
+  const [updatePost] = useUpdatePostMutation();
 
-  // Fetch votes for the post and user-specific votes
   const {
     data: votesData,
     refetch: refetchVotes,
@@ -53,7 +63,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     userEmail: currentUserEmail,
   });
 
-  // Fetch following status for the current user
   const { data: followingData } = useGetUserFollowingQuery(
     currentUserEmail || "",
     {
@@ -76,7 +85,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     return <div>Loading...</div>;
   }
 
-  // Type definition for the vote
   type VoteType = {
     upvotes: number;
     downvotes: number;
@@ -85,24 +93,25 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }> | null;
   };
 
-  // Default value for votes
   const votes: VoteType = votesData?.data ?? {
     upvotes: 0,
     downvotes: 0,
     userVotes: [],
   };
 
-  // Determine user's vote status based on fetched votes
   const userHasUpvoted = votes.userVotes?.[0]?.voteType === "upvote";
   const userHasDownvoted = votes.userVotes?.[0]?.voteType === "downvote";
 
-  // Comment visibility toggle
   const handleToggleComments = () => {
     setIsCommentsVisible((prev) => !prev);
   };
 
-  // Submit comment handler
   const handleSubmitComment = async () => {
+    if (!currentUserEmail) {
+      toast.error("Please login to comment");
+      setNewComment("");
+      return;
+    }
     if (newComment.trim()) {
       try {
         await createComment({
@@ -116,10 +125,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }
   };
 
-  // Handle voting (upvote or downvote)
   const handleVote = async (voteType: "upvote" | "downvote") => {
     if (!currentUserEmail) {
-      console.error("User not logged in. Cannot vote.");
+      toast.error("Please login to vote");
       return;
     }
     try {
@@ -128,16 +136,15 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         voteType,
         userEmail: currentUserEmail,
       }).unwrap();
-      refetchVotes(); // Refresh votes after a successful vote
+      refetchVotes();
     } catch (error) {
       console.error("Failed to vote:", error);
     }
   };
 
-  // Handle follow/unfollow
   const handleFollow = async () => {
     if (!currentUserEmail) {
-      console.error("User not logged in. Cannot follow.");
+      toast.error("Please login to follow this user");
       return;
     }
     try {
@@ -152,8 +159,67 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }
   };
 
+  const handleDeletePost = async () => {
+    if (currentUserEmail === post.author) {
+      try {
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        });
+
+        if (result.isConfirmed) {
+          await deletePost(post._id).unwrap();
+          await Swal.fire({
+            title: "Deleted!",
+            text: "Your post has been deleted.",
+            icon: "success",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to delete post:", error);
+        await Swal.fire({
+          title: "Error",
+          text: "Failed to delete the post. Please try again.",
+          icon: "error",
+        });
+      }
+    }
+  };
+
+  const handleEditPost = async () => {
+    if (!currentUserEmail || currentUserEmail !== post.author) {
+      return;
+    }
+    try {
+      await updatePost({
+        id: post._id,
+        title: editTitle,
+        content: editContent,
+      }).unwrap();
+      setIsEditModalOpen(false);
+      Swal.fire({
+        title: "Success!",
+        text: "Your post has been updated.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.error("Failed to update post:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to update the post. Please try again.",
+        icon: "error",
+      });
+    }
+  };
+
   return (
-    <div className="flex p-4 shadow-md rounded-md mb-4">
+    <div className="flex p-4 shadow-md rounded-md mb-4 border ">
+      <Toaster richColors />
       {/* Voting Section */}
       <div className="flex flex-col items-center mr-4 text-gray-500">
         {/* Upvote Button */}
@@ -183,24 +249,62 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {/* Post Content */}
       <div className="flex-1">
         {/* Header Section */}
-        <div className="flex justify-between items-center">
-          <Link href={`/posts/${post._id}`}>
-            <h2 className="text-xl font-semibold hover:underline">
-              {post.title}
-            </h2>
-          </Link>
-          <div className="flex items-center space-x-4">
-            <span className="text-xs text-gray-400">
-              Posted by {post.author}
-            </span>
-            <button
-              className={`px-4 py-1 text-sm rounded-md transition duration-200 ${
-                isFollowing ? "bg-red-500 text-white" : "bg-blue-500 text-white"
-              } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
-              onClick={handleFollow}
-            >
-              {isFollowing ? "Unfollow" : "Follow"}
-            </button>
+        <div className="sm:flex sm:justify-between sm:items-center">
+          <p className="flex gap-2 mt-2">
+            <Link href={`/posts/${post._id}`}>
+              <h2 className="text-2xl font-semibold hover:underline font-nunito">
+                {post.title}
+              </h2>
+            </Link>
+            {post.isPremium ? (
+              <p className="badge badge-warning">Premium</p>
+            ) : (
+              <p className="badge badge-neutral">Free</p>
+            )}
+          </p>
+          <div className="flex flex-col items-end gap-2">
+            {currentUserEmail && currentUserEmail === post.author ? (
+              <>
+                <span className="text-xs text-gray-400">
+                  Posted by {post.author}
+                </span>
+                <div className="flex gap-4">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <span className="flex items-center gap-2">
+                      <FaEdit /> Edit Post
+                    </span>
+                  </button>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={handleDeletePost}
+                  >
+                    <span className="flex items-center gap-2">
+                      <FaTrashAlt /> Delete Post
+                    </span>
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="text-xs text-gray-400">
+                  Posted by {post.author}
+                </span>
+
+                <button
+                  className={`px-4 py-1 text-sm rounded-md transition duration-200 ${
+                    isFollowing
+                      ? "bg-red-500 text-white"
+                      : "bg-blue-500 text-white"
+                  } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
+                  onClick={handleFollow}
+                >
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -234,7 +338,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         {/* Interaction Section */}
         <div className="mt-4 flex items-center text-sm text-gray-600">
           <button
-            className="flex items-center mr-6 hover:text-blue-500 transition duration-200"
+            className="flex items-center mr-6 hover:text-blue-500 transition duration-200 mt-1"
             onClick={handleToggleComments}
           >
             <FaCommentAlt className="mr-1" />
@@ -246,7 +350,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         {isCommentsVisible && (
           <div className="mt-4">
             {/* Fetch Comments for the Post */}
-            <CommentSection postId={post._id} />
+            <CommentSection
+              postId={post._id}
+              author={post.author}
+              currentUserEmail={currentUserEmail || ""}
+            />
 
             {/* Add New Comment */}
             <div className="mt-4">
@@ -270,6 +378,64 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </div>
         )}
       </div>
+
+      {/* Edit Post Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+            <h2 className="text-xl font-bold mb-4">Edit Post</h2>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium" htmlFor="editTitle">
+                Title
+              </label>
+              <input
+                type="text"
+                id="editTitle"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="w-full mt-1 p-2 border rounded-md"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block text-sm font-medium"
+                htmlFor="editContent"
+              >
+                Content
+              </label>
+              <ReactQuill
+                value={editContent}
+                onChange={setEditContent}
+                theme="snow"
+                modules={{
+                  toolbar: [
+                    [{ header: [1, 2, false] }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                  ],
+                }}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-md"
+                onClick={() => setIsEditModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                onClick={handleEditPost}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

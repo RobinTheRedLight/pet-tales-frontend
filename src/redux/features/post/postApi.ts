@@ -16,7 +16,7 @@ const postApi = baseApi.injectEndpoints({
         url: `/posts/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Post", id }],
+      providesTags: ["singlePost"],
     }),
 
     createPost: builder.mutation({
@@ -25,7 +25,7 @@ const postApi = baseApi.injectEndpoints({
         method: "POST",
         body: postData,
       }),
-      invalidatesTags: [{ type: "Post", id: "LIST" }],
+      invalidatesTags: ["Post"],
     }),
 
     updatePost: builder.mutation({
@@ -34,7 +34,7 @@ const postApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: postData,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Post", id }],
+      invalidatesTags: ["singlePost", "Post"],
     }),
 
     deletePost: builder.mutation({
@@ -42,10 +42,7 @@ const postApi = baseApi.injectEndpoints({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [
-        { type: "Post", id },
-        { type: "Post", id: "LIST" },
-      ],
+      invalidatesTags: ["Post"],
     }),
   }),
   overrideExisting: false,

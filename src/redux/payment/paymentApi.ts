@@ -9,7 +9,14 @@ export const paymentApi = baseApi.injectEndpoints({
         body: { amount },
       }),
     }),
+    getPaymentByEmail: builder.query({
+      query: (email) => ({
+        url: `/payments/get-payment-by-email?email=${email}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useCreatePaymentIntentMutation } = paymentApi;
+export const { useCreatePaymentIntentMutation, useGetPaymentByEmailQuery } =
+  paymentApi;

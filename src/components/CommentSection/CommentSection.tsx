@@ -1,17 +1,25 @@
 "use client";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import {
   useGetCommentsByPostIdQuery,
   useUpdateCommentMutation,
   useDeleteCommentMutation,
 } from "@/redux/features/comment/commentApi";
 import { Comment } from "@/types";
+import { toast, Toaster } from "sonner";
 
 interface CommentSectionProps {
   postId: string;
+  author: string;
+  currentUserEmail?: string;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({
+  postId,
+  author,
+  currentUserEmail,
+}) => {
   const { data, isLoading, isError, refetch } = useGetCommentsByPostIdQuery(
     postId,
     { skip: false }
@@ -39,17 +47,36 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
       await updateComment({ commentId, content: editContent });
       setEditCommentId(null);
       setEditContent("");
+      toast.success("Comment has been updated");
       refetch();
     }
   };
 
   const handleDelete = async (commentId: string) => {
-    await deleteComment(commentId);
-    refetch();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteComment(commentId);
+        refetch();
+        Swal.fire({
+          title: "Deleted!",
+          text: "The comment has been deleted.",
+          icon: "success",
+        });
+      }
+    });
   };
 
   return (
     <div className="mt-2">
+      <Toaster richColors />
       {comments.map((comment: Comment) => (
         <div key={comment._id} className="bg-gray-100 p-2 rounded-md mb-2">
           {editCommentId === comment._id ? (
@@ -83,21 +110,26 @@ const CommentSection: React.FC<CommentSectionProps> = ({ postId }) => {
                 Posted by {comment.userEmail}
               </span>
               <div className="mt-2">
-                <button
-                  onClick={() => {
-                    setEditCommentId(comment._id);
-                    setEditContent(comment.content);
-                  }}
-                  className="text-blue-500 hover:underline mr-4"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(comment._id)}
-                  className="text-red-500 hover:underline"
-                >
-                  Delete
-                </button>
+                {!currentUserEmail ||
+                  (currentUserEmail !== author && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEditCommentId(comment._id);
+                          setEditContent(comment.content);
+                        }}
+                        className="text-blue-500 hover:underline mr-4"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(comment._id)}
+                        className="text-red-500 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  ))}
               </div>
             </div>
           )}

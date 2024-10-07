@@ -12,7 +12,7 @@ function Sidebar() {
   };
 
   return (
-    <div className="relative min-h-0.5 flex items-center justify-center mt-10 rounded-lg">
+    <div className="relative min-h-0.5 flex items-center justify-center mt-20 rounded-lg">
       <Toaster richColors />
       {/* Background Image */}
       <div
