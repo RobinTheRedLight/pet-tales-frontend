@@ -16,6 +16,8 @@ export interface Post {
   images: string[];
   author: string;
   isPremium: boolean;
+  upvoteCount: number;
+  downvoteCount: number;
   createdAt: string;
   updatedAt: string;
 }
