@@ -9,24 +9,28 @@ import debounce from "lodash/debounce";
 const PostList = () => {
   const { data, isLoading, isError, error } = useGetPostsQuery("");
   const posts: Post[] = data?.data || [];
-  const [activeTab, setActiveTab] = useState<"Tip" | "Story">("Story");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "All" | "Tip" | "Story"
+  >("All");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     handleSearchAndFilter();
-  }, [posts, activeTab, searchTerm]);
+  }, [posts, selectedCategory, searchTerm]);
 
   // Function to handle the search and filter logic
   const handleSearchAndFilter = debounce(() => {
     let filtered = posts.filter(
       (post) =>
-        post.category === activeTab &&
+        (selectedCategory === "All" || post.category === selectedCategory) &&
         post.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Sort posts by upvoteCount in descending order
-    filtered = filtered.sort((a, b) => b.upvoteCount - a.upvoteCount);
+    // If a specific category is selected, sort posts by upvoteCount in descending order
+    if (selectedCategory !== "All") {
+      filtered = filtered.sort((a, b) => b.upvoteCount - a.upvoteCount);
+    }
 
     setFilteredPosts(filtered);
   }, 300); // 300ms debounce delay
@@ -34,6 +38,12 @@ const PostList = () => {
   // Handle search input change with debouncing
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    handleSearchAndFilter();
+  };
+
+  // Handle category filter change
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value as "All" | "Tip" | "Story");
     handleSearchAndFilter();
   };
 
@@ -56,35 +66,26 @@ const PostList = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 mt-10">
-      {/* Tabs for categories */}
-      <div
-        role="tablist"
-        className="tabs tabs-lifted tabs-lg flex justify-center mb-6"
-      >
-        <button
-          role="tab"
-          className={`tab ${activeTab === "Tip" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("Tip")}
+      {/* Search and Filter Section */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+        {/* Category Filter Dropdown */}
+        <select
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          className="border rounded-md px-4 py-2"
         >
-          Tip
-        </button>
-        <button
-          role="tab"
-          className={`tab ${activeTab === "Story" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("Story")}
-        >
-          Story
-        </button>
-      </div>
+          <option value="All">All Categories</option>
+          <option value="Tip">Tip</option>
+          <option value="Story">Story</option>
+        </select>
 
-      {/* Search Input */}
-      <div className="flex justify-center mb-6">
+        {/* Search Input */}
         <input
           type="text"
           placeholder="Search posts..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="w-full max-w-lg px-4 py-2 border rounded-md"
+          className="w-full md:max-w-md px-4 py-2 border rounded-md"
         />
       </div>
 

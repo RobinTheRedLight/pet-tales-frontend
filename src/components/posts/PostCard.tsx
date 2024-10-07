@@ -149,9 +149,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }
     try {
       if (isFollowing) {
-        await unfollowUser({ userIdToUnfollow: post.author }).unwrap();
+        await unfollowUser({ userEmailToUnfollow: post.author }).unwrap();
       } else {
-        await followUser({ userIdToFollow: post.author }).unwrap();
+        await followUser({ userEmailToFollow: post.author }).unwrap();
       }
       setIsFollowing((prev) => !prev);
     } catch (error) {

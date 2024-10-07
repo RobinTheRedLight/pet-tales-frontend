@@ -3,31 +3,31 @@ import { baseApi } from "@/redux/api/baseApi";
 const followApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     followUser: builder.mutation({
-      query: ({ userIdToFollow }) => ({
+      query: ({ userEmailToFollow }) => ({
         url: "/follow/",
         method: "POST",
-        body: { userIdToFollow },
+        body: { userEmailToFollow },
       }),
       invalidatesTags: ["Follow"],
     }),
     unfollowUser: builder.mutation({
-      query: ({ userIdToUnfollow }) => ({
+      query: ({ userEmailToUnfollow }) => ({
         url: "/follow/unfollow",
         method: "POST",
-        body: { userIdToUnfollow },
+        body: { userEmailToUnfollow },
       }),
       invalidatesTags: ["Follow"],
     }),
     getUserFollowers: builder.query({
-      query: (userId) => ({
-        url: `/follow/followers/${userId}`,
+      query: (userEmail) => ({
+        url: `/follow/followers/${userEmail}`,
         method: "GET",
       }),
       providesTags: ["Follow"],
     }),
     getUserFollowing: builder.query({
-      query: (userId) => ({
-        url: `/follow/following/${userId}`,
+      query: (userEmail) => ({
+        url: `/follow/following/${userEmail}`,
         method: "GET",
       }),
       providesTags: ["Follow"],

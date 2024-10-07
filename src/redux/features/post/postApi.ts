@@ -19,6 +19,14 @@ const postApi = baseApi.injectEndpoints({
       providesTags: ["singlePost"],
     }),
 
+    getPostByUserEmail: builder.query({
+      query: (userEmail: string) => ({
+        url: `/posts/user/${userEmail}`,
+        method: "GET",
+      }),
+      providesTags: ["Post"],
+    }),
+
     createPost: builder.mutation({
       query: (postData) => ({
         url: "/posts/",
@@ -54,6 +62,7 @@ export const {
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useGetPostByUserEmailQuery,
 } = postApi;
 
 export default postApi;

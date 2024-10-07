@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
 import { FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
@@ -8,29 +8,84 @@ import {
   useGetProfileQuery,
   useUpdateProfileMutation,
 } from "@/redux/features/user/userApi";
-import { ProfileFormInputs } from "@/types";
+import { Post, ProfileFormInputs } from "@/types";
 import Image from "next/image";
+import {
+  useGetUserFollowersQuery,
+  useGetUserFollowingQuery,
+} from "@/redux/features/follow/followApi";
+import { useGetPostByUserEmailQuery } from "@/redux/features/post/postApi";
+import PostCard from "@/components/posts/PostCard";
+import { formatDistanceToNow } from "date-fns";
 
 const Profile = () => {
   const imageHostKey = process.env.NEXT_PUBLIC_IMAGE_HOST_KEY;
 
-  const { data, isLoading, isError } = useGetProfileQuery("");
-  const profileData = data?.data;
+  // Fetch profile data
+  const {
+    data: profileData,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+  } = useGetProfileQuery("");
 
+  // Fetch posts, followers, and following
+  const { data: postsData, isLoading: isPostsLoading } =
+    useGetPostByUserEmailQuery(profileData?.data?.email || "");
+
+  const { data: followersData, isLoading: isFollowersLoading } =
+    useGetUserFollowersQuery(profileData?.data?.email || "");
+
+  const { data: followingData, isLoading: isFollowingLoading } =
+    useGetUserFollowingQuery(profileData?.data?.email || "");
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("posts");
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ProfileFormInputs>();
+  } = useForm<ProfileFormInputs>({
+    defaultValues: {
+      name: profileData?.data?.name || "",
+      phone: profileData?.data?.phone || "",
+      address: profileData?.data?.address || "",
+    },
+  });
 
   const [updateProfile] = useUpdateProfileMutation();
 
+  if (
+    isProfileLoading ||
+    isPostsLoading ||
+    isFollowersLoading ||
+    isFollowingLoading
+  ) {
+    return <div>Loading...</div>;
+  }
+
+  if (isProfileError) {
+    return <div>Error loading profile</div>;
+  }
+
+  // Assign data after loading
+  const profile = profileData?.data;
+  const posts = postsData?.data || [];
+  const followers = followersData?.data || [];
+  const following = followingData?.data || [];
+
+  // Format the createdAt date
+  const createdAtDate = profile?.createdAt ? new Date(profile.createdAt) : null;
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+  };
+  const formattedDate = createdAtDate
+    ? createdAtDate.toLocaleDateString(undefined, options)
+    : "Unknown Date";
+
+  // Handle Profile Update
   const onSubmit: SubmitHandler<ProfileFormInputs> = async (data) => {
-    let imageUrl = profileData?.image || "";
+    let imageUrl = profile?.image || "";
     try {
       if (data.image && data.image.length > 0) {
         Swal.fire({
@@ -100,44 +155,27 @@ const Profile = () => {
       });
     }
   };
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    if (profileData) {
+    if (profile) {
       reset({
-        name: profileData.name,
-        phone: profileData.phone,
-        address: profileData.address,
+        name: profile.name,
+        phone: profile.phone,
+        address: profile.address,
       });
     }
   };
 
-  useEffect(() => {
-    if (profileData) {
-      reset({
-        name: profileData.name,
-        phone: profileData.phone,
-        address: profileData.address,
-      });
-    }
-  }, [profileData, reset]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error loading profile</div>;
-  }
-
   return (
     <div className="font-nunito max-w-screen-lg mt-5 mx-auto">
       {/* Profile Header */}
-      <div className="shadow-md">
+      <div className="shadow-md border  rounded-lg">
         <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
           {/* Profile Picture */}
           <div className="w-24 h-24 mx-auto md:mx-0">
             <Image
-              src={profileData?.image || "/default-avatar.png"}
+              src={profile?.image || "/default-avatar.png"}
               alt="Profile"
               className="w-full h-full rounded-full object-cover"
               width={500}
@@ -146,18 +184,16 @@ const Profile = () => {
           </div>
           {/* User Info */}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-xl md:text-2xl font-bold">
-              {profileData?.name}
-            </h1>
-            <p className="">{profileData?.email}</p>
+            <h1 className="text-xl md:text-2xl font-bold">{profile?.name}</h1>
+            <p className="">{profile?.email}</p>
             <div className="flex flex-col md:flex-row items-center md:items-center mt-2 space-y-2 md:space-y-0 md:space-x-4">
               <div className="flex items-center justify-center md:justify-start space-x-1">
                 <FaMapMarkerAlt />
-                <span>{profileData?.address || "Unknown Location"}</span>
+                <span>{profile?.address || "Unknown Location"}</span>
               </div>
               <div className="flex items-center justify-center md:justify-start space-x-1">
                 <FaCalendarAlt />
-                <span>Joined January 2022</span>
+                <span>Joined {formattedDate}</span>
               </div>
             </div>
           </div>
@@ -170,25 +206,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="shadow-md mx-auto">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-around">
-          <div className="text-center">
-            <span className="font-bold text-xl">150</span>
-            <p className="">Posts</p>
-          </div>
-          <div className="text-center">
-            <span className="font-bold text-xl">200</span>
-            <p className="">Followers</p>
-          </div>
-          <div className="text-center">
-            <span className="font-bold text-xl">180</span>
-            <p className="">Following</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
+      {/* Tabs with Counts */}
       <div className="max-w-4xl mx-auto mt-4">
         <div className="flex border-b border-gray-300">
           <button
@@ -199,7 +217,7 @@ const Profile = () => {
                 : "text-gray-600"
             }`}
           >
-            Posts
+            Posts ({posts.length})
           </button>
           <button
             onClick={() => setActiveTab("followers")}
@@ -209,7 +227,7 @@ const Profile = () => {
                 : "text-gray-600"
             }`}
           >
-            Followers
+            Followers ({followers.length})
           </button>
           <button
             onClick={() => setActiveTab("following")}
@@ -219,7 +237,7 @@ const Profile = () => {
                 : "text-gray-600"
             }`}
           >
-            Following
+            Following ({following.length})
           </button>
         </div>
       </div>
@@ -228,82 +246,94 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto mt-4">
         {activeTab === "posts" && (
           <div>
-            {/* Display dummy posts */}
-            <div className="shadow-md rounded-lg p-4 mb-4">
-              <div className="flex space-x-4">
-                <Image
-                  src={profileData?.image || "/default-avatar.png"}
-                  alt="Profile"
-                  className="w-12 h-12 rounded-full"
-                  width={500}
-                  height={500}
-                />
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold">{profileData?.name}</span>
-                    <span className="text-gray-500">· 1h</span>
+            {posts.map((post: Post) => {
+              const postDate = post.createdAt
+                ? new Date(post.createdAt)
+                : new Date();
+              const timeAgo = formatDistanceToNow(postDate, {
+                addSuffix: true,
+              });
+
+              return (
+                <div key={post._id} className="shadow-md rounded-lg p-4 mb-4">
+                  <div className="flex space-x-4">
+                    <Image
+                      src={profile?.image || "/default-avatar.png"}
+                      alt="Profile"
+                      className="w-12 h-12 rounded-full"
+                      width={500}
+                      height={500}
+                    />
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold">{profile?.name}</span>
+                        <span className="text-gray-500">· {timeAgo}</span>
+                      </div>
+                      <p className="mt-2">
+                        <PostCard post={post} />
+                      </p>
+                    </div>
                   </div>
-                  <p className="mt-2">Just setting up my profile!</p>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         )}
         {activeTab === "followers" && (
           <div>
-            {/* Display dummy followers */}
-            <div className="shadow-md rounded-lg p-4 mb-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Image
-                  src="/default-avatar.png"
-                  alt="Follower"
-                  className="w-12 h-12 rounded-full"
-                  width={500}
-                  height={500}
-                />
-                <div>
-                  <span className="font-bold">Follower Name</span>
-                  <p className="text-gray-600">@followerusername</p>
-                </div>
+            {followers.map((follower: { userEmail: string }, index: number) => (
+              <div key={follower.userEmail} className="overflow-x-auto mt-2">
+                <table className="table w-1/2 mx-auto border-2">
+                  <tbody>
+                    {/* row 1 */}
+                    <tr className="hover ">
+                      <th className="">{index + 1}</th>
+                      <td className="">Email:</td>
+                      <td className="">{follower.userEmail}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <button className="btn btn-primary btn-sm">Follow</button>
-            </div>
+            ))}
           </div>
         )}
         {activeTab === "following" && (
           <div>
-            {/* Display dummy following */}
-            <div className=" shadow-md rounded-lg p-4 mb-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Image
-                  src="/default-avatar.png"
-                  alt="Following"
-                  className="w-12 h-12 rounded-full"
-                  width={500}
-                  height={500}
-                />
-                <div>
-                  <span className="font-bold">Following Name</span>
-                  <p className="text-gray-600">@followingusername</p>
+            {following.map(
+              (followedUser: { followingUserEmail: string }, index: number) => (
+                <div
+                  key={followedUser.followingUserEmail}
+                  className="overflow-x-auto "
+                >
+                  <table className="table w-1/2 mx-auto border-2">
+                    {/* head */}
+                    <tbody>
+                      {/* row 1 */}
+                      <tr className="hover">
+                        <th>{index + 1}</th>
+                        <td>Email:</td>
+                        <td>{followedUser.followingUserEmail}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-              <button className="btn btn-outline btn-sm">Following</button>
-            </div>
+              )
+            )}
           </div>
         )}
       </div>
 
       {/* Edit Profile Modal */}
       {isEditing && (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-md backdrop-brightness-100 z-50 mx-auto">
+        <div className="fixed flex items-center justify-center inset-0 bg-black bg-opacity-50 z-50 mx-auto">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className=" p-6 rounded-lg w-full max-w-lg"
+            className="p-6 rounded-lg w-full max-w-lg bg-white"
           >
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
             {/* Name Field */}
             <div className="mb-4">
-              <label className="block " htmlFor="name">
+              <label className="block" htmlFor="name">
                 Name
               </label>
               <input
@@ -322,7 +352,7 @@ const Profile = () => {
 
             {/* Phone Field */}
             <div className="mb-4">
-              <label className="block " htmlFor="phone">
+              <label className="block" htmlFor="phone">
                 Phone
               </label>
               <input
