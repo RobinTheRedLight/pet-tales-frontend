@@ -22,10 +22,13 @@ export const baseApi = createApi({
     "Profile",
     "AllUsers",
     "Post",
+    "UserPost",
     "Comment",
     "Vote",
     "Follow",
     "singlePost",
+    "AllPayments",
+    "AdminPosts",
   ],
   endpoints: () => ({}),
 });

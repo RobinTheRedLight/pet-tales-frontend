@@ -24,7 +24,7 @@ const postApi = baseApi.injectEndpoints({
         url: `/posts/user/${userEmail}`,
         method: "GET",
       }),
-      providesTags: ["Post"],
+      providesTags: ["UserPost"],
     }),
 
     createPost: builder.mutation({
@@ -33,7 +33,7 @@ const postApi = baseApi.injectEndpoints({
         method: "POST",
         body: postData,
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: ["Post", "singlePost", "UserPost"],
     }),
 
     updatePost: builder.mutation({
@@ -42,7 +42,7 @@ const postApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: postData,
       }),
-      invalidatesTags: ["singlePost", "Post"],
+      invalidatesTags: ["singlePost", "Post", "UserPost"],
     }),
 
     deletePost: builder.mutation({
@@ -50,7 +50,7 @@ const postApi = baseApi.injectEndpoints({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: ["Post", "singlePost", "UserPost"],
     }),
   }),
   overrideExisting: false,

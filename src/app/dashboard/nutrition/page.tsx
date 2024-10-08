@@ -9,6 +9,7 @@ interface NutritionData {
 
 const NutritionCalculator: React.FC = () => {
   const [weight, setWeight] = useState<number | "">("");
+  const [age, setAge] = useState<number | "">("");
   const [nutritionData, setNutritionData] = useState<NutritionData | null>(
     null
   );
@@ -95,6 +96,17 @@ const NutritionCalculator: React.FC = () => {
           value={weight}
           onChange={(e) =>
             setWeight(e.target.value === "" ? "" : parseFloat(e.target.value))
+          }
+          className="border border-gray-300 rounded p-2 w-full"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2 text-lg font-semibold">Age (years):</label>
+        <input
+          type="number"
+          value={age}
+          onChange={(e) =>
+            setAge(e.target.value === "" ? "" : parseFloat(e.target.value))
           }
           className="border border-gray-300 rounded p-2 w-full"
         />

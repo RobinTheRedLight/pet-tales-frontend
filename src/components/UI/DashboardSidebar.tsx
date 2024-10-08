@@ -64,7 +64,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                 <span>Users</span>
               </div>
             </Link>
-            <Link href="/dashboard/payment-history">
+            <Link href="/dashboard/payments">
               <div className="flex items-center space-x-2 p-2 hover:bg-gray-700 cursor-pointer">
                 <FaMoneyBill />
                 <span>Payment History</span>

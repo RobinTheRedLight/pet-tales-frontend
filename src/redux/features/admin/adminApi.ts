@@ -10,6 +10,14 @@ const adminApi = baseApi.injectEndpoints({
       providesTags: ["AllUsers"],
     }),
 
+    getAllAdminPosts: builder.query({
+      query: () => ({
+        url: "/admin/allPosts",
+        method: "GET",
+      }),
+      providesTags: ["AdminPosts"],
+    }),
+
     updateUserAdmin: builder.mutation({
       query: (adminData) => {
         return {
@@ -28,6 +36,22 @@ const adminApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["AllUsers"],
     }),
+
+    getAllPayments: builder.query({
+      query: () => ({
+        url: "/admin/allPayments",
+        method: "GET",
+      }),
+      providesTags: ["AllPayments"],
+    }),
+
+    togglePostPublishStatus: builder.mutation({
+      query: (id: string) => ({
+        url: `/admin/${id}/toggle-publish`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Post"],
+    }),
   }),
 });
 
@@ -35,4 +59,7 @@ export const {
   useGetAllUsersQuery,
   useDeleteUserMutation,
   useUpdateUserAdminMutation,
+  useGetAllPaymentsQuery,
+  useTogglePostPublishStatusMutation,
+  useGetAllAdminPostsQuery,
 } = adminApi;
