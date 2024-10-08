@@ -17,6 +17,7 @@ import {
 import { useGetPostByUserEmailQuery } from "@/redux/features/post/postApi";
 import PostCard from "@/components/posts/PostCard";
 import { formatDistanceToNow } from "date-fns";
+import withAuth from "@/components/withAuth/withAuth";
 
 const Profile = () => {
   const imageHostKey = process.env.NEXT_PUBLIC_IMAGE_HOST_KEY;
@@ -436,4 +437,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withAuth(Profile);

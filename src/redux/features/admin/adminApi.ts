@@ -50,7 +50,7 @@ const adminApi = baseApi.injectEndpoints({
         url: `/admin/${id}/toggle-publish`,
         method: "PATCH",
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: ["Post", "AdminPosts"],
     }),
   }),
 });

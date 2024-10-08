@@ -1,5 +1,6 @@
 "use client";
 import PublishPostCard from "@/components/posts/PublishPostCard";
+import withAdminAuth from "@/components/withAdminAuth/withAdminAuth";
 import { useGetAllAdminPostsQuery } from "@/redux/features/admin/adminApi";
 import { Post } from "@/types";
 import React from "react";
@@ -17,7 +18,10 @@ const Content = () => {
   const posts: Post[] = data?.data || [];
 
   return (
-    <div>
+    <div className="container mx-auto p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">
+        Content Management
+      </h1>
       {posts.map((post) => (
         <div key={post._id} className="mb-4">
           <PublishPostCard post={post} />
@@ -27,4 +31,4 @@ const Content = () => {
   );
 };
 
-export default Content;
+export default withAdminAuth(Content);

@@ -32,13 +32,14 @@ const NavBar = () => {
           Home
         </Link>
       </li>
-      <li className="text-lg hover:text-gray-400">
-        <Link href="/posts/create" onClick={() => setIsMenuOpen(false)}>
-          Create Post
-        </Link>
-      </li>
+
       {isHydrated && user ? (
         <>
+          <li className="text-lg hover:text-gray-400">
+            <Link href="/dashboard/profile" className="focus:outline-none">
+              Dashboard
+            </Link>
+          </li>
           <li className="text-lg hover:text-gray-400">
             <Link href="" onClick={handleLogOut} className="focus:outline-none">
               Logout
@@ -52,6 +53,11 @@ const NavBar = () => {
           </Link>
         </li>
       )}
+      <li className="text-lg hover:text-gray-400">
+        <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
+          Contact Us
+        </Link>
+      </li>
       <li className="text-lg hover:text-gray-400">
         <Link href="/about" onClick={() => setIsMenuOpen(false)}>
           About

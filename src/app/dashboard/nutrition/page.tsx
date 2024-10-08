@@ -1,4 +1,5 @@
 "use client";
+import withAuth from "@/components/withAuth/withAuth";
 import React, { useState } from "react";
 
 interface NutritionData {
@@ -158,4 +159,4 @@ const NutritionCalculator: React.FC = () => {
   );
 };
 
-export default NutritionCalculator;
+export default withAuth(NutritionCalculator);

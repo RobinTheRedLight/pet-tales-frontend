@@ -1,5 +1,6 @@
 import Image from "next/image";
 import heroImage from "../../../assets/Hero.jpg";
+import { IoCreateOutline } from "react-icons/io5";
 
 const Hero = () => {
   return (
@@ -28,10 +29,16 @@ const Hero = () => {
           around the world.
         </p>
         <a
-          href="#get-started"
+          href="/posts/create"
           className="inline-block bg-orange-600 px-8 py-4 text-lg rounded-full hover:bg-orange-700 transition duration-300 text-white"
         >
-          Share Story &raquo;
+          <p className="flex items-center">
+            {" "}
+            <span className="mr-2">Create Content</span>
+            <span>
+              <IoCreateOutline />
+            </span>
+          </p>
         </a>
       </div>
     </section>

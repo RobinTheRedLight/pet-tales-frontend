@@ -10,6 +10,7 @@ import {
 import { User } from "@/types/user.type";
 
 import Swal from "sweetalert2";
+import withAdminAuth from "@/components/withAdminAuth/withAdminAuth";
 
 const Users: React.FC = () => {
   const { data, isLoading, error } = useGetAllUsersQuery("");
@@ -186,4 +187,4 @@ const Users: React.FC = () => {
   );
 };
 
-export default Users;
+export default withAdminAuth(Users);

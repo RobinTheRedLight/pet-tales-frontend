@@ -4,6 +4,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="relative flex flex-col h-screen">
       <Navbar />
       <main>{children}</main>
+      {/* <Footer /> */}
     </div>
   );
 };

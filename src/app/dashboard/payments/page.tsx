@@ -2,6 +2,7 @@
 import React from "react";
 import { useGetAllPaymentsQuery } from "@/redux/features/admin/adminApi";
 import { IPayment } from "@/types";
+import withAdminAuth from "@/components/withAdminAuth/withAdminAuth";
 
 const Payments: React.FC = () => {
   const { data, isLoading, error } = useGetAllPaymentsQuery("");
@@ -60,4 +61,4 @@ const Payments: React.FC = () => {
   );
 };
 
-export default Payments;
+export default withAdminAuth(Payments);

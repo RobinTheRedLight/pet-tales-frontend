@@ -7,6 +7,7 @@ import { useGetPaymentByEmailQuery } from "@/redux/payment/paymentApi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+import withAuth from "@/components/withAuth/withAuth";
 
 const SinglePostPage = () => {
   const currentUser = useSelector((state: RootState) =>
@@ -68,4 +69,4 @@ const SinglePostPage = () => {
   );
 };
 
-export default SinglePostPage;
+export default withAuth(SinglePostPage);
