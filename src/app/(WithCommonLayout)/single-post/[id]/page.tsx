@@ -1,6 +1,4 @@
 "use client";
-
-import SinglePostCard from "@/components/posts/SinglePostCard";
 import { useParams, useRouter } from "next/navigation";
 import { useGetPostByIdQuery } from "@/redux/features/post/postApi";
 import { useGetPaymentByEmailQuery } from "@/redux/payment/paymentApi";
@@ -8,8 +6,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import withAuth from "@/components/withAuth/withAuth";
+import FollowingSinglePostCard from "@/components/posts/FollowingSinglePostCard";
 
-const SinglePostPage = () => {
+const SingleFollowingPostPage = () => {
   const currentUser = useSelector((state: RootState) =>
     selectCurrentUser(state)
   ) as { email: string } | null;
@@ -40,10 +39,7 @@ const SinglePostPage = () => {
     isPremiumUser = true;
   }
 
-  const isAuthor = currentUserEmail === post?.author;
-  console.log(currentUserEmail, post?.author);
-
-  if (post?.isPremium && !isPremiumUser && !isAuthor) {
+  if (post?.isPremium && !isPremiumUser) {
     localStorage.setItem("lastAttemptedPostId", id as string);
     router.push("/posts/premium");
     return null;
@@ -52,7 +48,7 @@ const SinglePostPage = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 mt-10">
       {post ? (
-        <SinglePostCard key={post._id} post={post} />
+        <FollowingSinglePostCard key={post._id} post={post} />
       ) : (
         <div className="text-center text-gray-500">No posts found.</div>
       )}
@@ -60,4 +56,4 @@ const SinglePostPage = () => {
   );
 };
 
-export default withAuth(SinglePostPage);
+export default withAuth(SingleFollowingPostPage);

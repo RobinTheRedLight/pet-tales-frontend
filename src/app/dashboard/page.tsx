@@ -1,4 +1,5 @@
 "use client";
+import withAuth from "@/components/withAuth/withAuth";
 import React from "react";
 
 const DashboardPage: React.FC = () => {
@@ -14,4 +15,4 @@ const DashboardPage: React.FC = () => {
   );
 };
 
-export default DashboardPage;
+export default withAuth(DashboardPage);

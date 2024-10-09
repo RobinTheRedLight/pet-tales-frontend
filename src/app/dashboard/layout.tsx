@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import DashboardSidebar from "@/components/UI/DashboardSidebar";
 import { useGetProfileQuery } from "@/redux/features/user/userApi";
+import withAuth from "@/components/withAuth/withAuth";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -60,4 +61,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default Layout;
+export default withAuth(Layout);

@@ -9,6 +9,7 @@ import { CreatePostFormInputs } from "@/types";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import Image from "next/image";
+import withAuth from "@/components/withAuth/withAuth";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -80,7 +81,7 @@ const CreatePost = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      router.push("/posts");
+      router.push("/dashboard/profile");
     } catch (error) {
       Swal.close();
       console.error("Failed to create post", error);
@@ -245,4 +246,4 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default withAuth(CreatePost);

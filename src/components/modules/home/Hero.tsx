@@ -1,6 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import heroImage from "../../../assets/Hero.jpg";
 import { IoCreateOutline } from "react-icons/io5";
+import { motion } from "framer-motion";
+import { fadeUp } from "@/Animation/constant";
 
 const Hero = () => {
   return (
@@ -20,7 +24,13 @@ const Hero = () => {
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="relative z-10 text-center px-4"
+      >
         <h1 className="text-white font-nunito text-5xl md:text-6xl mb-4">
           Discover Amazing Pet Stories
         </h1>
@@ -40,7 +50,7 @@ const Hero = () => {
             </span>
           </p>
         </a>
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -1,4 +1,6 @@
+"use client";
 import PaymentForm from "@/components/Payment/PaymentForm";
+import withAuth from "@/components/withAuth/withAuth";
 import Link from "next/link";
 
 const Premium = () => {
@@ -27,4 +29,4 @@ const Premium = () => {
   );
 };
 
-export default Premium;
+export default withAuth(Premium);

@@ -1,39 +1,35 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/display-name */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { logout, selectCurrentUser } from "@/redux/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-const withAdminAuth = (WrappedComponent: any) => {
-  return (props: any) => {
-    const router = useRouter();
+export default function withAdminAuth(WrappedComponent: any) {
+  return function WithAdminAuth(props: any) {
+    const user = useAppSelector(selectCurrentUser) as { role: string } | null;
+    const [isClient, setIsClient] = useState(false);
     const dispatch = useAppDispatch();
-    const user = useAppSelector(selectCurrentUser) as any;
+
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
 
     useEffect(() => {
       if (!user) {
-        // If no user is logged in, redirect to login page
         Swal.fire("You are not authorized!");
-        router.replace("/login");
-      } else if (!user.role || user.role !== "admin") {
-        // If user is not an admin, log them out and redirect to login page
-        Swal.fire("You are not authorized!");
+        redirect("/login");
+      } else if (user.role !== "admin") {
         dispatch(logout());
-        router.replace("/login");
+        redirect("/login");
       }
-    }, [user]);
+    }, [isClient, user, dispatch]);
 
-    if (!user || user.role !== "admin") {
+    if (!isClient || !user || user.role !== "admin") {
       return null;
     }
 
     return <WrappedComponent {...props} />;
   };
-};
-
-export default withAdminAuth;
+}

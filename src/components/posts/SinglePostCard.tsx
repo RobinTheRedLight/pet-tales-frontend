@@ -27,6 +27,7 @@ import Swal from "sweetalert2";
 import { toast, Toaster } from "sonner";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { useRouter } from "next/navigation";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -35,6 +36,7 @@ interface PostCardProps {
 }
 
 const SinglePostCard: React.FC<PostCardProps> = ({ post }) => {
+  const router = useRouter();
   const currentUser = useSelector((state: RootState) =>
     selectCurrentUser(state)
   ) as { email: string } | null;
@@ -174,6 +176,7 @@ const SinglePostCard: React.FC<PostCardProps> = ({ post }) => {
 
         if (result.isConfirmed) {
           await deletePost(post._id).unwrap();
+          router.back();
           await Swal.fire({
             title: "Deleted!",
             text: "Your post has been deleted.",
@@ -289,27 +292,38 @@ const SinglePostCard: React.FC<PostCardProps> = ({ post }) => {
               </>
             ) : (
               <>
-                <span className="text-xs text-gray-400">
-                  Posted by {post.author}
-                </span>
-
-                <button
-                  className={`px-4 py-1 text-sm rounded-md transition duration-200 ${
-                    isFollowing
-                      ? "bg-red-500 text-white"
-                      : "bg-blue-500 text-white"
-                  } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
-                  onClick={handleFollow}
-                >
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </button>
+                <div className="sm:flex items-center gap-2">
+                  <span className="text-xs font-semibold ">
+                    Posted by {post.author}
+                  </span>
+                  <div className="flex gap-2 justify-end sm:block">
+                    {isFollowing && (
+                      <Link
+                        href={`/post/${post.author}`}
+                        className="btn btn-xs btn-outline  btn-success sm:mr-2"
+                      >
+                        view posts
+                      </Link>
+                    )}
+                    <button
+                      className={`px-1 sm:px-4  sm:py-1 text-sm rounded-md transition duration-200 ${
+                        isFollowing
+                          ? "bg-red-500 text-white"
+                          : "bg-blue-500 text-white"
+                      } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
+                      onClick={handleFollow}
+                    >
+                      {isFollowing ? "Unfollow" : "Follow"}
+                    </button>
+                  </div>
+                </div>
               </>
             )}
           </div>
         </div>
 
         {/* Content Summary and Read More */}
-        <div className="mt-2 text-gray-700">
+        <div className="mt-2">
           <div
             dangerouslySetInnerHTML={{
               __html: post.content,

@@ -13,13 +13,14 @@ const PostList = () => {
     "All" | "Tip" | "Story"
   >("All");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"None" | "Upvote">("None");
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     handleSearchAndFilter();
-  }, [posts, selectedCategory, searchTerm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts, selectedCategory, searchTerm, sortOrder]);
 
-  // Function to handle the search and filter logic
   const handleSearchAndFilter = debounce(() => {
     let filtered = posts.filter(
       (post) =>
@@ -27,13 +28,12 @@ const PostList = () => {
         post.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // If a specific category is selected, sort posts by upvoteCount in descending order
-    if (selectedCategory !== "All") {
+    if (sortOrder === "Upvote") {
       filtered = filtered.sort((a, b) => b.upvoteCount - a.upvoteCount);
     }
 
     setFilteredPosts(filtered);
-  }, 300); // 300ms debounce delay
+  }, 300);
 
   // Handle search input change with debouncing
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,9 +41,13 @@ const PostList = () => {
     handleSearchAndFilter();
   };
 
-  // Handle category filter change
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value as "All" | "Tip" | "Story");
+    handleSearchAndFilter();
+  };
+
+  const handleSortOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOrder(e.target.value as "None" | "Upvote");
     handleSearchAndFilter();
   };
 
@@ -68,16 +72,28 @@ const PostList = () => {
     <div className="max-w-4xl mx-auto p-4 mt-10">
       {/* Search and Filter Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        {/* Category Filter Dropdown */}
-        <select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          className="border rounded-md px-4 py-2"
-        >
-          <option value="All">All Categories</option>
-          <option value="Tip">Tip</option>
-          <option value="Story">Story</option>
-        </select>
+        <div className="flex gap-2">
+          {/* Category Filter Dropdown */}
+          <select
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="border rounded-md px-4 py-2"
+          >
+            <option value="All">All Categories</option>
+            <option value="Tip">Tip</option>
+            <option value="Story">Story</option>
+          </select>
+
+          {/* Sort Order Dropdown */}
+          <select
+            value={sortOrder}
+            onChange={handleSortOrderChange}
+            className="border rounded-md px-4 py-2"
+          >
+            <option value="None">No Sorting</option>
+            <option value="Upvote">Sort by Upvotes</option>
+          </select>
+        </div>
 
         {/* Search Input */}
         <input

@@ -289,27 +289,38 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
               </>
             ) : (
               <>
-                <span className="text-xs text-gray-400">
-                  Posted by {post.author}
-                </span>
-
-                <button
-                  className={`px-4 py-1 text-sm rounded-md transition duration-200 ${
-                    isFollowing
-                      ? "bg-red-500 text-white"
-                      : "bg-blue-500 text-white"
-                  } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
-                  onClick={handleFollow}
-                >
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </button>
+                <div className="sm:flex items-center gap-2">
+                  <span className="text-xs font-semibold ">
+                    Posted by {post.author}
+                  </span>
+                  <div className="flex gap-2 justify-end sm:block">
+                    {isFollowing && (
+                      <Link
+                        href={`/post/${post.author}`}
+                        className="btn btn-xs btn-outline  btn-success sm:mr-2"
+                      >
+                        view posts
+                      </Link>
+                    )}
+                    <button
+                      className={`px-1 sm:px-4  sm:py-1 text-sm rounded-md transition duration-200 ${
+                        isFollowing
+                          ? "bg-red-500 text-white"
+                          : "bg-blue-500 text-white"
+                      } hover:${isFollowing ? "bg-red-600" : "bg-blue-600"}`}
+                      onClick={handleFollow}
+                    >
+                      {isFollowing ? "Unfollow" : "Follow"}
+                    </button>
+                  </div>
+                </div>
               </>
             )}
           </div>
         </div>
 
         {/* Content Summary and Read More */}
-        <div className="mt-2 text-gray-700">
+        <div className="mt-2">
           <div
             dangerouslySetInnerHTML={{
               __html:

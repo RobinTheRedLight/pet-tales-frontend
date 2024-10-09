@@ -34,7 +34,7 @@ const adminApi = baseApi.injectEndpoints({
         url: `/admin/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["AllUsers"],
+      invalidatesTags: ["AllUsers", "Follow", "Post"],
     }),
 
     getAllPayments: builder.query({
