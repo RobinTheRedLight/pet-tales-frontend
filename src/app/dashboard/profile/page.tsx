@@ -18,6 +18,7 @@ import { useGetPostByUserEmailQuery } from "@/redux/features/post/postApi";
 import PostCard from "@/components/posts/PostCard";
 import { formatDistanceToNow } from "date-fns";
 import withAuth from "@/components/withAuth/withAuth";
+import Loading from "@/components/Loading/Loading";
 
 const Profile = () => {
   const imageHostKey = process.env.NEXT_PUBLIC_IMAGE_HOST_KEY;
@@ -61,7 +62,11 @@ const Profile = () => {
     isFollowersLoading ||
     isFollowingLoading
   ) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
   }
 
   if (isProfileError) {

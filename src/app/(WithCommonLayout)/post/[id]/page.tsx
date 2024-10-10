@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/Loading/Loading";
 import FollowingPostCard from "@/components/posts/FollowingPostCard";
 import withAuth from "@/components/withAuth/withAuth";
 import { useGetPostByUserEmailQuery } from "@/redux/features/post/postApi";
@@ -15,7 +16,7 @@ const FollowingUserPosts = () => {
     useGetPostByUserEmailQuery(id);
 
   if (isPostsLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   const posts = postsData?.data || [];

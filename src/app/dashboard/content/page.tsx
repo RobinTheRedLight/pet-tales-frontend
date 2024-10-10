@@ -1,4 +1,5 @@
 "use client";
+import Loading from "@/components/Loading/Loading";
 import PublishPostCard from "@/components/posts/PublishPostCard";
 import withAdminAuth from "@/components/withAdminAuth/withAdminAuth";
 import { useGetAllAdminPostsQuery } from "@/redux/features/admin/adminApi";
@@ -9,11 +10,7 @@ const Content = () => {
   const { data, isLoading } = useGetAllAdminPostsQuery("");
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <Loading />;
   }
   const posts: Post[] = data?.data || [];
 

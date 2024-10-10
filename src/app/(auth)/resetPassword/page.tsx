@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useResetPasswordMutation } from "@/redux/features/auth/authApi";
+import Loading from "@/components/Loading/Loading";
 
 type ResetPasswordFormInputs = {
   password: string;
@@ -99,7 +100,13 @@ const ResetPassword = () => {
 };
 
 const WrappedResetPassword = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense
+    fallback={
+      <div>
+        <Loading />
+      </div>
+    }
+  >
     <ResetPassword />
   </Suspense>
 );

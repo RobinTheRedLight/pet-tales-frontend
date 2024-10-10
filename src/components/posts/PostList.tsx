@@ -5,6 +5,7 @@ import { useGetPostsQuery } from "@/redux/features/post/postApi";
 import PostCard from "./PostCard";
 import { Post } from "@/types";
 import debounce from "lodash/debounce";
+import Loading from "../Loading/Loading";
 
 const PostList = () => {
   const { data, isLoading, isError, error } = useGetPostsQuery("");
@@ -52,11 +53,7 @@ const PostList = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (isError) {

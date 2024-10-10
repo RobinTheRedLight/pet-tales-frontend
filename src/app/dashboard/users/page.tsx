@@ -11,6 +11,7 @@ import { User } from "@/types/user.type";
 
 import Swal from "sweetalert2";
 import withAdminAuth from "@/components/withAdminAuth/withAdminAuth";
+import Loading from "@/components/Loading/Loading";
 
 const Users: React.FC = () => {
   const { data, isLoading, error } = useGetAllUsersQuery("");
@@ -94,12 +95,7 @@ const Users: React.FC = () => {
     }
   };
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-xl font-semibold">Loading users...</div>
-      </div>
-    );
+  if (isLoading) return <Loading />;
   if (error)
     return (
       <div className="flex justify-center items-center h-screen">

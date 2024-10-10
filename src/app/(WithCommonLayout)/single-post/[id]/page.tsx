@@ -7,6 +7,7 @@ import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import withAuth from "@/components/withAuth/withAuth";
 import FollowingSinglePostCard from "@/components/posts/FollowingSinglePostCard";
+import Loading from "@/components/Loading/Loading";
 
 const SingleFollowingPostPage = () => {
   const currentUser = useSelector((state: RootState) =>
@@ -25,11 +26,7 @@ const SingleFollowingPostPage = () => {
   const router = useRouter();
 
   if (isLoading || isPaymentLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   const post = data?.data;

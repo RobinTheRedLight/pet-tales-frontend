@@ -16,6 +16,7 @@ import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 
 import "react-quill/dist/quill.snow.css";
+import PostLoading from "../Loading/PostLoading";
 
 interface PostCardProps {
   post: Post;
@@ -42,7 +43,7 @@ const FollowingPostCard: React.FC<PostCardProps> = ({ post }) => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <PostLoading />;
   }
 
   type VoteType = {

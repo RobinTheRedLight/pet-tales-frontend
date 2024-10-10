@@ -4,6 +4,7 @@ import { FaBars } from "react-icons/fa";
 import DashboardSidebar from "@/components/UI/DashboardSidebar";
 import { useGetProfileQuery } from "@/redux/features/user/userApi";
 import withAuth from "@/components/withAuth/withAuth";
+import Loading from "@/components/Loading/Loading";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,7 +20,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (isProfileLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
   }
   if (isProfileError) {
     return <div>Error loading profile</div>;

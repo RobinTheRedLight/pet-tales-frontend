@@ -27,6 +27,7 @@ import Swal from "sweetalert2";
 import { toast, Toaster } from "sonner";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import PostLoading from "../Loading/PostLoading";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -82,7 +83,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   }, [followingData, post.author]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <PostLoading />;
   }
 
   type VoteType = {

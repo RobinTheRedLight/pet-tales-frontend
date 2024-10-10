@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import withAuth from "@/components/withAuth/withAuth";
+import Loading from "@/components/Loading/Loading";
 
 const SinglePostPage = () => {
   const currentUser = useSelector((state: RootState) =>
@@ -26,11 +27,7 @@ const SinglePostPage = () => {
   const router = useRouter();
 
   if (isLoading || isPaymentLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   const post = data?.data;

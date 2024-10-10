@@ -3,17 +3,13 @@ import React from "react";
 import { useGetAllPaymentsQuery } from "@/redux/features/admin/adminApi";
 import { IPayment } from "@/types";
 import withAdminAuth from "@/components/withAdminAuth/withAdminAuth";
+import Loading from "@/components/Loading/Loading";
 
 const Payments: React.FC = () => {
   const { data, isLoading, error } = useGetAllPaymentsQuery("");
   const payments = data?.data as IPayment[];
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-xl font-semibold">Loading payments...</div>
-      </div>
-    );
+  if (isLoading) return <Loading />;
 
   if (error)
     return (
