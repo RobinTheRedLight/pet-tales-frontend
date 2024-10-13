@@ -13,7 +13,7 @@ import Loading from "@/components/Loading/Loading";
 const SinglePostPage = () => {
   const currentUser = useSelector((state: RootState) =>
     selectCurrentUser(state)
-  ) as { email: string } | null;
+  ) as { email: string; role: string } | null;
 
   const currentUserEmail = currentUser?.email;
 
@@ -40,7 +40,12 @@ const SinglePostPage = () => {
   const isAuthor = currentUserEmail === post?.author;
   console.log(currentUserEmail, post?.author);
 
-  if (post?.isPremium && !isPremiumUser && !isAuthor) {
+  if (
+    post?.isPremium &&
+    !isPremiumUser &&
+    !isAuthor &&
+    currentUser?.role !== "admin"
+  ) {
     localStorage.setItem("lastAttemptedPostId", id as string);
     router.push("/posts/premium");
     return null;

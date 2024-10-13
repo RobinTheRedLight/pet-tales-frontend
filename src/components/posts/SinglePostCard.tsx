@@ -255,15 +255,11 @@ const SinglePostCard: React.FC<PostCardProps> = ({ post }) => {
         {/* Header Section */}
         <div className="sm:flex sm:justify-between sm:items-center">
           <p className="flex gap-2 mt-2">
-            <Link href={`/posts/${post._id}`}>
-              <h2 className="text-2xl font-semibold hover:underline font-nunito">
-                {post.title}
-              </h2>
-            </Link>
+            <p className="text-xl  font-nunito">{post.category}</p>
             {post.isPremium ? (
-              <p className="badge badge-warning">Premium</p>
+              <p className="badge badge-sm badge-warning">Premium</p>
             ) : (
-              <p className="badge badge-neutral">Free</p>
+              <p className="badge badge-sm  badge-neutral">Free</p>
             )}
           </p>
           <div className="flex flex-col items-end gap-2">
@@ -325,11 +321,16 @@ const SinglePostCard: React.FC<PostCardProps> = ({ post }) => {
 
         {/* Content Summary and Read More */}
         <div className="mt-2">
+          <Link href="#">
+            <h2 className="text-2xl font-semibold hover:underline font-nunito my-2">
+              {post.title}
+            </h2>
+          </Link>
           <div
             dangerouslySetInnerHTML={{
               __html: post.content,
             }}
-            className="prose prose-sm"
+            className="prose max-w-none text-black text-justify "
           />
         </div>
 
@@ -387,7 +388,10 @@ const SinglePostCard: React.FC<PostCardProps> = ({ post }) => {
       {/* Edit Post Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+          <div
+            className="bg-white rounded-lg p-6 w-full max-w-lg"
+            style={{ maxHeight: "80vh", overflowY: "auto" }}
+          >
             <h2 className="text-xl font-bold mb-4">Edit Post</h2>
 
             <div className="mb-4">

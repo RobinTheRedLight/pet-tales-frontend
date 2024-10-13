@@ -17,7 +17,6 @@ interface CommentSectionProps {
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   postId,
-  author,
   currentUserEmail,
 }) => {
   const { data, isLoading, isError, refetch } = useGetCommentsByPostIdQuery(
@@ -110,26 +109,25 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 Posted by {comment.userEmail}
               </span>
               <div className="mt-2">
-                {!currentUserEmail ||
-                  (currentUserEmail !== author && (
-                    <>
-                      <button
-                        onClick={() => {
-                          setEditCommentId(comment._id);
-                          setEditContent(comment.content);
-                        }}
-                        className="text-blue-500 hover:underline mr-4"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(comment._id)}
-                        className="text-red-500 hover:underline"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  ))}
+                {currentUserEmail === comment.userEmail && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setEditCommentId(comment._id);
+                        setEditContent(comment.content);
+                      }}
+                      className="text-blue-500 hover:underline mr-4"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(comment._id)}
+                      className="text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}

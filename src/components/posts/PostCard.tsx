@@ -251,16 +251,13 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <div className="flex-1">
         {/* Header Section */}
         <div className="sm:flex sm:justify-between sm:items-center">
-          <p className="flex gap-2 mt-2">
-            <Link href={`/posts/${post._id}`}>
-              <h2 className="text-2xl font-semibold hover:underline font-nunito">
-                {post.title}
-              </h2>
-            </Link>
+          <p className="flex mt-2 gap-2">
+            <p className="text-xl font-nunito ">{post.category}</p>
+
             {post.isPremium ? (
-              <p className="badge badge-warning">Premium</p>
+              <p className="badge badge-warning badge-sm">Premium</p>
             ) : (
-              <p className="badge badge-neutral">Free</p>
+              <p className="badge badge-neutral badge-sm">Free</p>
             )}
           </p>
           <div className="flex flex-col items-end gap-2">
@@ -322,6 +319,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
         {/* Content Summary and Read More */}
         <div className="mt-2">
+          <Link href={`/posts/${post._id}`}>
+            <p className="text-2xl font-semibold hover:underline font-nunito my-2">
+              {post.title}
+            </p>
+          </Link>
           <div
             dangerouslySetInnerHTML={{
               __html:
@@ -329,7 +331,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   ? post.content.slice(0, 200) + "..."
                   : post.content,
             }}
-            className="prose prose-sm"
+            className="prose max-w-none text-justify "
           />
           {post.content.length > 200 && (
             <Link href={`/posts/${post._id}`}>
@@ -394,7 +396,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {/* Edit Post Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+          <div
+            className="bg-white rounded-lg p-6 w-full max-w-lg"
+            style={{ maxHeight: "80vh", overflowY: "auto" }}
+          >
             <h2 className="text-xl font-bold mb-4">Edit Post</h2>
 
             <div className="mb-4">

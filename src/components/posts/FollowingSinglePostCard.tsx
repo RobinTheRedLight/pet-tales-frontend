@@ -127,15 +127,11 @@ const FollowingSinglePostCard: React.FC<PostCardProps> = ({ post }) => {
         {/* Header Section */}
         <div className="sm:flex sm:justify-between sm:items-center">
           <p className="flex gap-2 mt-2">
-            <Link href="#">
-              <h2 className="text-2xl font-semibold hover:underline font-nunito">
-                {post.title}
-              </h2>
-            </Link>
+            <p className="text-xl font-nunito">{post.category}</p>
             {post.isPremium ? (
-              <p className="badge badge-warning">Premium</p>
+              <p className="badge badge-sm badge-warning">Premium</p>
             ) : (
-              <p className="badge badge-neutral">Free</p>
+              <p className="badge badge-sm badge-neutral">Free</p>
             )}
           </p>
           <div className="text-xs font-semibold">Posted by {post.author}</div>
@@ -143,19 +139,17 @@ const FollowingSinglePostCard: React.FC<PostCardProps> = ({ post }) => {
 
         {/* Content Summary and Read More */}
         <div className="mt-2">
+          <Link href="#">
+            <h2 className="text-2xl font-semibold  font-nunito my-2">
+              {post.title}
+            </h2>
+          </Link>
           <div
             dangerouslySetInnerHTML={{
               __html: post.content,
             }}
-            className="prose prose-sm"
+            className="prose max-w-none text-black text-justify "
           />
-          {post.content.length > 200 && (
-            <Link href={`/posts/${post._id}`}>
-              <span className="text-blue-600 hover:underline cursor-pointer">
-                Read More
-              </span>
-            </Link>
-          )}
         </div>
 
         {/* Image Gallery */}

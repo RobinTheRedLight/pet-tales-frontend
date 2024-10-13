@@ -28,7 +28,7 @@ const CreatePost = () => {
   const onSubmit: SubmitHandler<CreatePostFormInputs> = async (data) => {
     try {
       Swal.fire({
-        title: "Uploading images...",
+        title: "Uploading...",
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
