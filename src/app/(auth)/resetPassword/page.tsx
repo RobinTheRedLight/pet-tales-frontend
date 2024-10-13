@@ -39,9 +39,11 @@ const ResetPassword = () => {
 
     try {
       await resetPassword({ token, password: data.password }).unwrap();
+
       alert(
         "Password reset successfully. Please login with your new password."
       );
+      window.location.href = "/login";
     } catch (error) {
       console.log(error);
       alert("Failed to reset password.");

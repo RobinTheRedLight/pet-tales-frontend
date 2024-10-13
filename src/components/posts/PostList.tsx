@@ -6,10 +6,17 @@ import PostCard from "./PostCard";
 import { Post } from "@/types";
 import debounce from "lodash/debounce";
 import Loading from "../Loading/Loading";
+import { useInView } from "react-intersection-observer";
 
 const PostList = () => {
-  const { data, isLoading, isError, error } = useGetPostsQuery("");
-  const posts: Post[] = data?.data || [];
+  const [page, setPage] = useState(1);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const { data, isLoading, isError, error, isFetching } =
+    useGetPostsQuery(page);
+
+  // Filters and sorting state
   const [selectedCategory, setSelectedCategory] = useState<
     "All" | "Tip" | "Story"
   >("All");
@@ -17,13 +24,35 @@ const PostList = () => {
   const [sortOrder, setSortOrder] = useState<"None" | "Upvote">("None");
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
+  // Intersection Observer to detect when the user reaches the bottom
+  const [ref, inView] = useInView();
+
+  // Append new posts to the list
+  useEffect(() => {
+    if (data?.data) {
+      if (data.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setAllPosts((prevPosts) => [...prevPosts, ...data.data]);
+      }
+    }
+  }, [data]);
+
+  // Handle infinite scrolling
+  useEffect(() => {
+    if (inView && hasMore && !isFetching) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }, [inView, hasMore, isFetching]);
+
+  // Apply filters and sorting
   useEffect(() => {
     handleSearchAndFilter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posts, selectedCategory, searchTerm, sortOrder]);
+  }, [allPosts, selectedCategory, searchTerm, sortOrder]);
 
   const handleSearchAndFilter = debounce(() => {
-    let filtered = posts.filter(
+    let filtered = allPosts.filter(
       (post) =>
         (selectedCategory === "All" || post.category === selectedCategory) &&
         post.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -36,7 +65,7 @@ const PostList = () => {
     setFilteredPosts(filtered);
   }, 300);
 
-  // Handle search input change with debouncing
+  // Handle input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     handleSearchAndFilter();
@@ -52,11 +81,8 @@ const PostList = () => {
     handleSearchAndFilter();
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (isError) {
+  // Handle initial loading error
+  if (isError && page === 1) {
     return (
       <div className="flex justify-center items-center h-screen text-red-500">
         Error:{" "}
@@ -103,13 +129,32 @@ const PostList = () => {
       </div>
 
       {/* Filtered and Sorted Posts */}
-      {filteredPosts.length === 0 ? (
+      {filteredPosts.length === 0 && !isLoading ? (
         <div className="text-center text-gray-500">No posts found.</div>
       ) : (
-        filteredPosts.map((post: Post) => (
-          <PostCard key={post._id} post={post} />
-        ))
+        filteredPosts.map((post: Post, index) => {
+          // Attach the ref to the last post for infinite scrolling
+          if (index === filteredPosts.length - 1) {
+            return (
+              <div ref={ref} key={post._id}>
+                <PostCard post={post} />
+              </div>
+            );
+          } else {
+            return <PostCard key={post._id} post={post} />;
+          }
+        })
       )}
+
+      {/* Loading Indicator */}
+      {isFetching && page > 1 && (
+        <div className="flex justify-center my-4">
+          <Loading />
+        </div>
+      )}
+
+      {/* Initial Loading Indicator */}
+      {isLoading && page === 1 && <Loading />}
     </div>
   );
 };
