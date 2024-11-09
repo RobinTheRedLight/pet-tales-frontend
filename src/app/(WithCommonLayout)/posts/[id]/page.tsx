@@ -52,7 +52,7 @@ const SinglePostPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 mt-10">
+    <div className="max-w-4xl mx-auto mt-2">
       {post ? (
         <SinglePostCard key={post._id} post={post} />
       ) : (

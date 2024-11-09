@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
-import { FaCommentAlt, FaTrashAlt, FaEdit } from "react-icons/fa";
+import { GrLike, GrDislike } from "react-icons/gr";
+import { FaRegComment, FaTrashAlt, FaEdit } from "react-icons/fa";
+import { IoIosMore } from "react-icons/io";
 import { Post } from "@/types";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import CommentSection from "@/components/CommentSection/CommentSection";
@@ -54,6 +55,28 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [unfollowUser] = useUnfollowUserMutation();
   const [deletePost] = useDeletePostMutation();
   const [updatePost] = useUpdatePostMutation();
+
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef<HTMLDivElement>(null);
+
+  // Toggle dropdown visibility
+  const toggleOptions = () => {
+    setShowOptions((prev) => !prev);
+  };
+
+  // Close the dropdown if clicked outside
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleClickOutside = (event: any) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        setShowOptions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const {
     data: votesData,
@@ -219,33 +242,8 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   };
 
   return (
-    <div className="flex p-4 shadow-md rounded-md mb-4 border bg-white">
+    <div className="flex flex-col px-4 pt-2 pb-2 shadow-md rounded-md mb-4 border bg-white">
       <Toaster richColors />
-      {/* Voting Section */}
-      <div className="flex flex-col items-center mr-4 text-gray-500">
-        {/* Upvote Button */}
-        <button
-          className={`hover:text-blue-500 transition duration-200 ${
-            userHasUpvoted ? "text-blue-500" : ""
-          }`}
-          onClick={() => handleVote("upvote")}
-        >
-          <AiOutlineArrowUp size={24} />
-        </button>
-
-        {/* Vote Count (show only upvotes) */}
-        <span className="text-sm font-medium mt-1">{votes.upvotes}</span>
-
-        {/* Downvote Button */}
-        <button
-          className={`hover:text-red-500 transition duration-200 mt-1 ${
-            userHasDownvoted ? "text-red-500" : ""
-          }`}
-          onClick={() => handleVote("downvote")}
-        >
-          <AiOutlineArrowDown size={24} />
-        </button>
-      </div>
 
       {/* Post Content */}
       <div className="flex-1">
@@ -263,27 +261,49 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <div className="flex flex-col items-end gap-2">
             {currentUserEmail && currentUserEmail === post.author ? (
               <>
+                <div className="relative">
+                  {/* More icon button */}
+                  <button
+                    onClick={toggleOptions}
+                    className=" hover:bg-gray-100 p-1 rounded-full text-black"
+                  >
+                    <IoIosMore size={24} />
+                  </button>
+
+                  {/* Popup dropdown menu */}
+                  {showOptions && (
+                    <div
+                      ref={optionsRef}
+                      className="absolute top-8 right-0 bg-white border border-gray-300 shadow-lg rounded-md w-40 z-10"
+                    >
+                      <button
+                        className="w-full text-left px-4 py-2 text-blue-500 hover:bg-gray-100"
+                        onClick={() => {
+                          setIsEditModalOpen(true);
+                          setShowOptions(false); // Close after action
+                        }}
+                      >
+                        <span className="flex items-center gap-2">
+                          <FaEdit /> Edit Post
+                        </span>
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                        onClick={() => {
+                          handleDeletePost();
+                          setShowOptions(false); // Close after action
+                        }}
+                      >
+                        <span className="flex items-center gap-2">
+                          <FaTrashAlt /> Delete Post
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <span className="text-xs text-gray-400">
                   Posted by {post.author}
                 </span>
-                <div className="flex gap-4">
-                  <button
-                    className="text-blue-500 hover:text-blue-700"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <span className="flex items-center gap-2">
-                      <FaEdit /> Edit Post
-                    </span>
-                  </button>
-                  <button
-                    className="text-red-500 hover:text-red-700"
-                    onClick={handleDeletePost}
-                  >
-                    <span className="flex items-center gap-2">
-                      <FaTrashAlt /> Delete Post
-                    </span>
-                  </button>
-                </div>
               </>
             ) : (
               <>
@@ -348,50 +368,71 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             <ImageGallery images={post.images} title={post.title} />
           </div>
         )}
-
-        {/* Interaction Section */}
-        <div className="mt-4 flex items-center text-sm text-gray-600">
-          <button
-            className="flex items-center mr-6 hover:text-blue-500 transition duration-200 mt-1"
-            onClick={handleToggleComments}
-          >
-            <FaCommentAlt className="mr-1" />
-            {isCommentsVisible ? "Hide Comments" : "Show Comments"}
-          </button>
-        </div>
-
-        {/* Comment Section */}
-        {isCommentsVisible && (
-          <div className="mt-4">
-            {/* Fetch Comments for the Post */}
-            <CommentSection
-              postId={post._id}
-              author={post.author}
-              currentUserEmail={currentUserEmail || ""}
-            />
-
-            {/* Add New Comment */}
-            <div className="mt-4">
-              <input
-                type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Add a comment..."
-                className="border rounded-md p-2 w-full"
-              />
-              <button
-                onClick={handleSubmitComment}
-                disabled={isCreating}
-                className={`bg-blue-500 text-white px-4 py-2 rounded-md mt-2 hover:bg-blue-600 ${
-                  isCreating ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {isCreating ? "Submitting..." : "Submit"}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Voting Section at Bottom */}
+      <div className="flex items-center justify-between mt-2 border-t pt-1">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 bg-gray-100 rounded-lg p-2 text-black">
+            <button
+              className={`hover:text-blue-500 transition duration-200 ${
+                userHasUpvoted ? "text-blue-500" : ""
+              }`}
+              onClick={() => handleVote("upvote")}
+            >
+              <GrLike size={20} />
+            </button>
+            <span className="text-sm font-medium">{votes.upvotes}</span>
+            <button
+              className={`hover:text-red-500 transition duration-200 ${
+                userHasDownvoted ? "text-red-500" : ""
+              }`}
+              onClick={() => handleVote("downvote")}
+            >
+              <GrDislike size={20} />
+            </button>
+          </div>
+          {/* Interaction Section */}
+          <div className="bg-gray-100 rounded-lg p-2 flex items-center text-sm  text-black">
+            <button
+              className="flex items-center mr-6 hover:text-blue-500 transition duration-200 mt-1"
+              onClick={handleToggleComments}
+            >
+              <FaRegComment size={20} className="mr-1" />
+              {isCommentsVisible ? "Hide Comments" : "Show Comments"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Comment Section */}
+      {isCommentsVisible && (
+        <div className="mt-4">
+          <CommentSection
+            postId={post._id}
+            author={post.author}
+            currentUserEmail={currentUserEmail || ""}
+          />
+          <div className="mt-4">
+            <input
+              type="text"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Add a comment..."
+              className="border rounded-md p-2 w-full"
+            />
+            <button
+              onClick={handleSubmitComment}
+              disabled={isCreating}
+              className={`bg-blue-500 text-white px-4 py-2 rounded-md mt-2 hover:bg-blue-600 ${
+                isCreating ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {isCreating ? "Submitting..." : "Submit"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit Post Modal */}
       {isEditModalOpen && (
