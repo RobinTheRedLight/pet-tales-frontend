@@ -176,7 +176,7 @@ const Profile = () => {
   return (
     <div className="font-nunito max-w-screen-lg mt-5 mx-auto">
       {/* Profile Header */}
-      <div className="shadow-md border  rounded-lg">
+      <div className="shadow-md border  rounded-lg bg-white">
         <div className="px-4 py-6 flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
           {/* Profile Picture */}
           <div className="w-24 h-24 mx-auto md:mx-0">
@@ -290,7 +290,7 @@ const Profile = () => {
             {followers.map((follower: { userEmail: string }, index: number) => (
               <div key={follower.userEmail} className="overflow-x-auto mt-2">
                 <table className="table w-1/2 mx-auto border-2">
-                  <tbody>
+                  <tbody className="bg-white">
                     {/* row 1 */}
                     <tr className="hover ">
                       <th className="">{index + 1}</th>
@@ -313,9 +313,9 @@ const Profile = () => {
                 >
                   <table className="table w-1/2 mx-auto border-2">
                     {/* head */}
-                    <tbody>
+                    <tbody className="bg-white">
                       {/* row 1 */}
-                      <tr className="hover">
+                      <tr className="hover ">
                         <th>{index + 1}</th>
                         <td>Email:</td>
                         <td>{followedUser.followingUserEmail}</td>

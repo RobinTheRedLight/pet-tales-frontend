@@ -69,6 +69,7 @@ const Login = () => {
             <input
               id="email"
               type="email"
+              defaultValue="robinmitra789@gmail.com"
               placeholder="you@example.com"
               {...register("email", {
                 required: "Email is required",
@@ -96,6 +97,7 @@ const Login = () => {
             <input
               id="password"
               type="password"
+              defaultValue="123456"
               placeholder="••••••••"
               {...register("password", {
                 required: "Password is required",

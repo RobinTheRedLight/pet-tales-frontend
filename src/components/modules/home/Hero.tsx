@@ -23,7 +23,7 @@ const CreatePost = () => {
         <div className="flex justify-center">
           <a
             href="/posts/create"
-            className="flex items-center bg-orange-600 px-6 py-3 rounded-full text-white text-lg font-medium hover:bg-orange-700 transition duration-300"
+            className="flex items-center bg-orange-600 px-6 py-1 lg:py-3 lg: rounded-full text-white lg:text-lg font-medium hover:bg-orange-700 transition duration-300"
           >
             <span className="mr-2">Create Post</span>
             <IoCreateOutline size={20} />

@@ -107,8 +107,8 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 font-nunito">
-      <div className="shadow-2xl rounded-lg p-8 w-full max-w-3xl">
+    <div className=" min-h-screen flex items-center justify-center p-4 font-nunito">
+      <div className="shadow-2xl rounded-lg p-8 w-full max-w-3xl bg-white">
         <h2 className="text-3xl font-bold mb-8 text-center">Create New Post</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Title Field */}
