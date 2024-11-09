@@ -219,7 +219,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   };
 
   return (
-    <div className="flex p-4 shadow-md rounded-md mb-4 border ">
+    <div className="flex p-4 shadow-md rounded-md mb-4 border bg-white">
       <Toaster richColors />
       {/* Voting Section */}
       <div className="flex flex-col items-center mr-4 text-gray-500">

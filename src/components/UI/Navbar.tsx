@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { logout, selectCurrentUser } from "@/redux/features/auth/authSlice";
 import Image from "next/image";
-import logo from "../../app/logo.png";
+import logo from "../../app/logo3.png";
 
 const NavBar = () => {
   const dispatch = useAppDispatch();
@@ -67,13 +67,12 @@ const NavBar = () => {
   );
 
   return (
-    <nav className="font-short-stack bg-white">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+    <nav className="font-short-stack bg-white shadow-md rounded-md ">
+      <div className="container mx-auto py-1 px-4 flex justify-between items-center">
         <div className="flex items-center">
           <Image
             alt="Pet Tales Logo"
             className="object-contain"
-            height={100}
             src={logo}
             width={300}
           />

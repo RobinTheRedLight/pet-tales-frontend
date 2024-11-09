@@ -6,7 +6,6 @@ import PostCard from "./PostCard";
 import { Post } from "@/types";
 import debounce from "lodash/debounce";
 import Loading from "../Loading/Loading";
-
 const PostList = () => {
   const { data, isLoading, isError, error } = useGetPostsQuery("");
   const posts: Post[] = data?.data || [];
@@ -66,9 +65,10 @@ const PostList = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 mt-10">
+    <div className="max-w-3xl mx-auto ">
       {/* Search and Filter Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+
+      <div className=" bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row items-center justify-between gap-4 mb-6 mt-4">
         <div className="flex gap-2">
           {/* Category Filter Dropdown */}
           <select

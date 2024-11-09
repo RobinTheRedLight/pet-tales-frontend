@@ -1,58 +1,37 @@
 "use client";
 
-import Image from "next/image";
-import heroImage from "../../../assets/Hero.jpg";
 import { IoCreateOutline } from "react-icons/io5";
 import { motion } from "framer-motion";
 import { fadeUp } from "@/Animation/constant";
 
-const Hero = () => {
+const CreatePost = () => {
   return (
-    <section className="relative flex items-center justify-center h-screen bg-gray-800">
-      {/* Background Image */}
-      <Image
-        src={heroImage}
-        alt="Hero Background"
-        layout="fill"
-        objectFit="cover"
-        objectPosition="center"
-        className="absolute inset-0 z-0"
-        priority
-      />
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-
-      {/* Content */}
+    <section className="flex items-center justify-center pt-4">
       <motion.div
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
-        className="relative z-10 text-center px-4"
+        className="w-full max-w-md bg-white shadow-md rounded-lg p-6"
       >
-        <h1 className="text-white font-nunito text-5xl md:text-6xl mb-4">
-          Discover Amazing Pet Stories
-        </h1>
-        <p className="text-gray-200 text-lg mb-8 font-short-stack">
-          Join our community to share and explore heartwarming pet tales from
-          around the world.
-        </p>
-        <a
-          href="/posts/create"
-          className="inline-block bg-orange-600 px-8 py-4 text-lg rounded-full hover:bg-orange-700 transition duration-300 text-white"
-        >
-          <p className="flex items-center">
-            {" "}
-            <span className="mr-2">Create Content</span>
-            <span>
-              <IoCreateOutline />
-            </span>
-          </p>
-        </a>
+        {/* Title */}
+        <h2 className="text-gray-800 text-xl font-semibold mb-4 text-center">
+          Share Your Story
+        </h2>
+
+        {/* Create Post Button */}
+        <div className="flex justify-center">
+          <a
+            href="/posts/create"
+            className="flex items-center bg-orange-600 px-6 py-3 rounded-full text-white text-lg font-medium hover:bg-orange-700 transition duration-300"
+          >
+            <span className="mr-2">Create Post</span>
+            <IoCreateOutline size={20} />
+          </a>
+        </div>
       </motion.div>
     </section>
   );
 };
 
-export default Hero;
+export default CreatePost;
