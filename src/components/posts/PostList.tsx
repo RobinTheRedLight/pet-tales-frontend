@@ -1,5 +1,5 @@
 "use client";
-
+import { IoCreateOutline } from "react-icons/io5";
 import React, { useState, useEffect } from "react";
 import { useGetPostsQuery } from "@/redux/features/post/postApi";
 import PostCard from "./PostCard";
@@ -66,6 +66,19 @@ const PostList = () => {
 
   return (
     <div className="max-w-3xl mx-auto ">
+      <section className="md:hidden  pt-4">
+          {/* Create Post Button */}
+          <div className="flex justify-center ">
+            <a
+              href="/posts/create"
+              className="flex items-center bg-orange-600 px-6 py-2 rounded-full text-white text-lg font-medium hover:bg-orange-700 transition duration-300"
+            >
+              <span className="mr-2">Create Post</span>
+              <IoCreateOutline size={20} />
+            </a>
+          </div>
+      
+      </section>
       {/* Search and Filter Section */}
 
       <div className=" bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row items-center justify-between gap-4 mb-6 mt-4">
