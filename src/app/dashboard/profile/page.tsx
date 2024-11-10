@@ -19,7 +19,18 @@ import PostCard from "@/components/posts/PostCard";
 import { formatDistanceToNow } from "date-fns";
 import withAuth from "@/components/withAuth/withAuth";
 import Loading from "@/components/Loading/Loading";
-
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 const Profile = () => {
   const imageHostKey = process.env.NEXT_PUBLIC_IMAGE_HOST_KEY;
 
@@ -40,7 +51,7 @@ const Profile = () => {
   const { data: followingData, isLoading: isFollowingLoading } =
     useGetUserFollowingQuery(profileData?.data?.email || "");
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("posts");
+  const [activeTab, setActiveTab] = useState("overview");
   const {
     register,
     handleSubmit,
@@ -162,6 +173,29 @@ const Profile = () => {
     }
   };
 
+  const revenueData = [
+    { name: "Jan", revenue: 20 },
+    { name: "Feb", revenue: 35 },
+    { name: "Mar", revenue: 15 },
+    { name: "Apr", revenue: 25 },
+    { name: "May", revenue: 40 },
+    { name: "Jun", revenue: 50 },
+  ];
+
+  const userGrowthData = [
+    { name: "Jan", users: 1 },
+    { name: "Feb", users: 2 },
+    { name: "Mar", users: 3 },
+    { name: "Apr", users: 4 },
+    { name: "May", users: 5 },
+    { name: "Jun", users: 6 },
+  ];
+
+  const postCategoriesData = [
+    { name: "Tip", value: 2 },
+    { name: "Story", value: 4 },
+  ];
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     if (profile) {
@@ -216,6 +250,16 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto mt-4">
         <div className="flex border-b border-gray-300">
           <button
+            onClick={() => setActiveTab("overview")}
+            className={`flex-1 text-center py-2 ${
+              activeTab === "overview"
+                ? "font-bold border-b-2 border-blue-500"
+                : "text-gray-600"
+            }`}
+          >
+            Overview
+          </button>
+          <button
             onClick={() => setActiveTab("posts")}
             className={`flex-1 text-center py-2 ${
               activeTab === "posts"
@@ -250,6 +294,65 @@ const Profile = () => {
 
       {/* Tab Content */}
       <div className="max-w-4xl mx-auto mt-4">
+        {activeTab === "overview" && (
+          <div className="my-8 mx-auto">
+            <h2 className="text-xl font-bold mb-4">Data Visualizations</h2>
+
+            {/* Revenue Chart */}
+            <div className="mb-8">
+              <h3 className="font-semibold text-lg">
+                Total Revenue (Last 6 months)
+              </h3>
+              <BarChart width={600} height={300} data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="revenue" fill="#8884d8" />
+              </BarChart>
+            </div>
+
+            {/* User Growth Chart */}
+            <div className="mb-8">
+              <h3 className="font-semibold text-lg">
+                User Growth (Last 6 months)
+              </h3>
+              <BarChart width={600} height={300} data={userGrowthData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="users" fill="#82ca9d" />
+              </BarChart>
+            </div>
+
+            {/* Post Categories Chart */}
+            <div className=" ">
+              <h3 className="font-semibold text-lg">Post Categories</h3>
+              <PieChart width={400} height={400}>
+                <Pie
+                  data={postCategoriesData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={150}
+                  label
+                >
+                  {postCategoriesData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={["#0088FE", "#00C49F", "#FFBB28", "#FF8042"][index]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </div>
+          </div>
+        )}
         {activeTab === "posts" && (
           <div>
             {posts.map((post: Post) => {

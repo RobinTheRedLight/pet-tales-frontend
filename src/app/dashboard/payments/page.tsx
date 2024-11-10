@@ -7,7 +7,6 @@ import Loading from "@/components/Loading/Loading";
 
 const Payments: React.FC = () => {
   const { data, isLoading, error } = useGetAllPaymentsQuery("");
-  const payments = data?.data as IPayment[];
 
   if (isLoading) return <Loading />;
 
@@ -17,6 +16,7 @@ const Payments: React.FC = () => {
         <div className="text-xl text-red-500">Error loading payments</div>
       </div>
     );
+  const payments = data?.data as IPayment[];
 
   return (
     <div className="container mx-auto p-6">
